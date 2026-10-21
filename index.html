@@ -404,6 +404,14 @@
       .card:hover { transform: none; box-shadow: none; }
     }
 
+    @media (max-width: 620px) {
+      /* Let the browser defer painting catalog cards that are far off screen. */
+      .grid:not(.featured-grid) > .card {
+        content-visibility: auto;
+        contain-intrinsic-size: auto 360px;
+      }
+    }
+
     @media (max-width: 380px) {
       .poster { height: 175px; }
       .search { width: 145px; }
@@ -910,6 +918,18 @@
   </dialog>
 
   <script>
+    function urlPosterLeve(url) {
+      try {
+        const endereco = new URL(url, document.baseURI);
+        if (endereco.hostname === "image.tmdb.org") {
+          endereco.pathname = endereco.pathname.replace("/t/p/original/", "/t/p/w500/");
+        }
+        return endereco.href;
+      } catch (erro) {
+        return url;
+      }
+    }
+
     const catalogoMarvel = [
       ["Homem de Ferro",2008,"https://image.tmdb.org/t/p/original/gDKjDC7udT18B1Do4ePlsDk2Rug.jpg","Depois de escapar de um sequestro com uma armadura improvisada, Tony Stark volta para casa decidido a mudar a indústria de armas que o tornou famoso. Enquanto aperfeiçoa a tecnologia, descobre que pessoas próximas estão ligadas a uma conspiração. Sua transformação em herói exige que assuma responsabilidade pelas consequências de suas próprias invenções.","mcu","https://tvgidsassets.nl/v387/upload/i/origineel/iron-man-763146882.jpg"],
       ["O Incrivel Hulk",2008,"https://image.tmdb.org/t/p/w500/v1UXe9WlwkkZ5YrffUSPdYNeJz3.jpg","Bruce Banner vive escondido e procura controlar a transformação que ocorre quando seu corpo é tomado pela raiva. Perseguido pelo general Ross, ele retorna aos Estados Unidos em busca da cientista Betty Ross e de uma cura. Quando um experimento cria uma criatura igualmente poderosa, Banner precisa deter a ameaça sem perder o controle de si mesmo.","mcu","https://www.ecartelera.com/carteles/fondos/1800/1801-n2.jpg"],
@@ -981,7 +1001,7 @@
       card.dataset.generos = `marvel acao ${franquia}`;
       card.dataset.sinopse = sinopse;
       if (imagemDetalhe) card.dataset.backdrop = imagemDetalhe;
-      card.innerHTML = `<div class="poster"><img class="poster-image" src="${imagem}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Ação · Marvel</span></div></div>`;
+      card.innerHTML = `<div class="poster"><img class="poster-image" src="${urlPosterLeve(imagem)}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Ação · Marvel</span></div></div>`;
       grade.append(card);
     });
     const catalogoVelozes = [
@@ -1004,7 +1024,7 @@
       card.dataset.generos = "acao velozesefuriosos";
       card.dataset.sinopse = sinopse;
       card.dataset.backdrop = imagemDetalhe;
-      card.innerHTML = `<div class="poster"><img class="poster-image" src="${imagem}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Ação · Aventura</span></div></div>`;
+      card.innerHTML = `<div class="poster"><img class="poster-image" src="${urlPosterLeve(imagem)}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Ação · Aventura</span></div></div>`;
       grade.append(card);
     });
     const catalogoComediaTerror = [
@@ -1024,7 +1044,7 @@
       card.dataset.generos = `comedia terror ${franquia}`;
       card.dataset.sinopse = sinopse;
       card.dataset.backdrop = imagem;
-      card.innerHTML = `<div class="poster"><img class="poster-image" src="${imagem}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Comédia · Terror</span></div></div>`;
+      card.innerHTML = `<div class="poster"><img class="poster-image" src="${urlPosterLeve(imagem)}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Comédia · Terror</span></div></div>`;
       grade.append(card);
     });
     const capasAlternativas = {
@@ -1083,6 +1103,7 @@
         }, { rootMargin: "800px 0px" })
       : null;
     document.querySelectorAll(".poster-image[loading='lazy']").forEach((imagem) => {
+      imagem.src = urlPosterLeve(imagem.currentSrc || imagem.src);
       imagem.decoding = "async";
       if (observadorDeImagens) observadorDeImagens.observe(imagem);
       else imagem.loading = "eager";
@@ -1487,6 +1508,9 @@
           xmenfenixnegra: [
             ["Sophie Turner", "Jean Grey / Fênix"], ["James McAvoy", "Charles Xavier"], ["Michael Fassbender", "Erik Lehnsherr / Magneto"], ["Nicholas Hoult", "Hank McCoy / Fera"], ["Jessica Chastain", "Vuk"]
           ],
+          guardioesdagalaxiavol3: [
+            ["Chris Pratt", "Peter Quill / Senhor das Estrelas"], ["Zoe Saldaña", "Gamora"], ["Dave Bautista", "Drax"], ["Karen Gillan", "Nebulosa"], ["Pom Klementieff", "Mantis"], ["Bradley Cooper", "Rocket"], ["Vin Diesel", "Groot"], ["Sean Gunn", "Kraglin"], ["Chukwudi Iwuji", "Alto Evolucionário"], ["Will Poulter", "Adam Warlock"], ["Maria Bakalova", "Cosmo"]
+          ],
           velozesefuriosos6: [
             ["Vin Diesel", "Dominic Toretto"], ["Paul Walker", "Brian O'Conner"], ["Dwayne Johnson", "Luke Hobbs"], ["Michelle Rodriguez", "Letty Ortiz"], ["Jordana Brewster", "Mia Toretto"], ["Tyrese Gibson", "Roman Pearce"], ["Ludacris", "Tej Parker"], ["Sung Kang", "Han Lue"], ["Gal Gadot", "Gisele Yashar"], ["Luke Evans", "Owen Shaw"]
           ],          inatividadeparanormal: [
@@ -1651,17 +1675,26 @@
           foto.alt = `Foto de ${ator.nome}`;
           foto.loading = "lazy";
           foto.addEventListener("error", async () => {
-            if (!ator.fotoCommons && !ator.commonsTentativa) {
-              ator.commonsTentativa = true;
-              try {
-                const alternativa = await buscarFotoCommons(ator.nome);
-                if (alternativa) { ator.fotoCommons = alternativa; foto.src = alternativa; return; }
-              } catch (erro) { console.warn("Foto alternativa indispon?vel para", ator.nome, erro); }
-            }
             const avatar = document.createElement("div");
             avatar.className = "cast-avatar";
             avatar.textContent = ator.nome.split(/\s+/).map((parte) => parte[0]).slice(0, 2).join("").toUpperCase();
             foto.replaceWith(avatar);
+
+            if (ator.commonsTentativa) return;
+            ator.commonsTentativa = true;
+            try {
+              const alternativa = await buscarFotoCommons(ator.nome);
+              if (!alternativa || !avatar.isConnected) return;
+              const fotoAlternativa = document.createElement("img");
+              fotoAlternativa.src = alternativa;
+              fotoAlternativa.alt = `Foto de ${ator.nome}`;
+              fotoAlternativa.loading = "lazy";
+              fotoAlternativa.addEventListener("error", () => fotoAlternativa.replaceWith(avatar), { once: true });
+              avatar.replaceWith(fotoAlternativa);
+              ator.fotoCommons = alternativa;
+            } catch (erro) {
+              console.warn("Foto alternativa indisponível para", ator.nome, erro);
+            }
           }, { once: true });
           figura.append(foto);
         } else {
