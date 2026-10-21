@@ -1,0 +1,1724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0f1b">
+      <title>Dry Filmes — filmes e séries para sua próxima sessão</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --fundo: #0d0f1b;
+      --painel: #171a2a;
+      --texto: #f5f3f7;
+      --suave: #a6a3ad;
+      --vermelho: #7868f6;
+      --borda: rgba(255,255,255,.1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: radial-gradient(ellipse at top, #21171b 0, var(--fundo) 45rem);
+      color: var(--texto);
+      font-family: "DM Sans", sans-serif;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    button, input { font: inherit; }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: auto;
+    }
+
+    header {
+      position: relative;
+      z-index: 5;
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--borda);
+      background: rgba(13,15,27,.90);
+      backdrop-filter: blur(16px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font: 700 22px "Space Grotesk", sans-serif;
+    }
+
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: var(--vermelho);
+    }
+
+    nav {
+      display: flex;
+      gap: 26px;
+      color: #d0cdd5;
+      font-size: 14px;
+    }
+
+    nav a:hover { color: var(--vermelho); }
+
+    .search {
+      width: 210px;
+      padding: 10px 13px;
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+      background: #171a2a;
+      color: white;
+      outline: none;
+    }
+
+    .search:focus { border-color: var(--vermelho); }
+
+    .hero {
+      min-height: 540px;
+      display: flex;
+      align-items: center;
+      padding: 60px 0;
+      background:
+        linear-gradient(90deg, #0d0f1b 3%, rgba(13,15,27,.90) 38%, rgba(13,15,27,.38) 72%, rgba(13,15,27,.18)),
+        linear-gradient(0deg, #0d0f1b 0%, rgba(13,15,27,.25) 35%, transparent 72%),
+        url("https://images6.alphacoders.com/638/638575.jpg") center center / cover;
+    }
+
+    .hero-content { max-width: 600px; padding: 26px 0; }
+
+    .tag {
+      display: inline-block;
+      padding: 7px 11px;
+      border: 1px solid rgba(132,119,255,.45);
+      border-radius: 30px;
+      color: #b8adff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      margin: 18px 0 14px;
+      font: 700 clamp(42px, 7vw, 68px)/1.02 "Space Grotesk", sans-serif;
+      letter-spacing: -3px;
+      text-wrap: balance;
+    }
+
+    .hero p {
+      max-width: 500px;
+      color: #d0cdd5;
+      line-height: 1.7;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 13px 18px;
+      border: 0;
+      border-radius: 10px;
+      background: var(--vermelho);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .button:hover { background: #6254dc; }
+
+    main { padding-bottom: 60px; }
+
+    .section { padding-top: 46px; }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 5px;
+      font: 600 30px "Space Grotesk", sans-serif;
+    }
+
+    .suggestion-board { margin-top: 28px; padding: clamp(18px, 3vw, 28px); border: 1px solid var(--borda); border-radius: 16px; background: linear-gradient(145deg, rgba(120,104,246,.12), rgba(23,26,42,.92) 55%); box-shadow: 0 14px 40px rgba(0,0,0,.2); }
+    .suggestion-heading { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+    .suggestion-heading h3 { margin: 0 0 5px; font: 600 22px "Space Grotesk", sans-serif; }
+    .suggestion-heading p { margin: 0; color: var(--suave); font-size: 14px; }
+    .suggestion-local-note { flex: 0 0 auto; color: #c5bbff; font-size: .78rem; }
+    .suggestion-form { display: grid; gap: 9px; }
+    .suggestion-fields { display: grid; grid-template-columns: 1.5fr 1fr; gap: 12px; }
+    .suggestion-form label { display: grid; gap: 6px; color: #ececf5; font-size: .88rem; font-weight: 650; }
+    .suggestion-form input, .suggestion-form textarea { width: 100%; padding: 11px 12px; border: 1px solid var(--borda); border-radius: 9px; color: var(--texto); background: rgba(9,12,24,.78); font: inherit; font-size: .92rem; }
+    .suggestion-form textarea { min-height: 78px; resize: vertical; }
+    .suggestion-form input:focus, .suggestion-form textarea:focus { outline: 2px solid var(--vermelho); outline-offset: 1px; }
+    .suggestion-submit { justify-self: start; margin-top: 3px; padding: 10px 16px; border: 0; border-radius: 9px; color: #fff; background: var(--vermelho); font: inherit; font-weight: 700; cursor: pointer; }
+    .suggestion-submit:hover { filter: brightness(1.1); }
+    .suggestion-feedback { min-height: 1.2em; margin: 0; color: #c5bbff; font-size: .84rem; }
+    .suggestion-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 10px; margin-top: 12px; }
+    .suggestion-empty { grid-column: 1 / -1; margin: 0; color: var(--suave); font-size: .9rem; }
+    .suggestion-item { padding: 12px 14px; border: 1px solid var(--borda); border-radius: 10px; background: rgba(9,12,24,.62); }
+    .suggestion-item header { display: flex; justify-content: space-between; gap: 10px; color: #f1efff; font-size: .85rem; }
+    .suggestion-item time { color: var(--suave); font-size: .72rem; }
+    .suggestion-item p { margin: 7px 0 0; color: #d9d7e2; font-size: .88rem; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+    @media (max-width: 650px) {
+      .suggestion-heading { align-items: flex-start; flex-direction: column; }
+      .suggestion-fields { grid-template-columns: 1fr; }
+    }
+    .section-heading p {
+      margin: 0;
+      color: var(--suave);
+      font-size: 14px;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .filter {
+      padding: 8px 14px;
+      border: 1px solid var(--borda);
+      border-radius: 30px;
+      background: transparent;
+      color: #d0cdd5;
+      cursor: pointer;
+    }
+
+    .filter:hover, .filter.active {
+      border-color: var(--vermelho);
+      background: var(--vermelho);
+      color: white;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 18px;
+    }
+
+    .featured-shelf {
+      margin: 0 0 28px;
+      padding: 18px;
+      border: 1px solid rgba(132,119,255,.28);
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(120,104,246,.12), rgba(255,255,255,.025));
+    }
+    .featured-shelf h3 { margin: 0 0 14px; font: 600 22px "Space Grotesk", sans-serif; }
+    .grid.featured-grid {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 2px 2px 12px;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-x: contain;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #7868f6 rgba(255,255,255,.12);
+    }
+    .featured-grid::-webkit-scrollbar { height: 6px; }
+    .featured-grid::-webkit-scrollbar-thumb { border-radius: 8px; background: #7868f6; }
+    .featured-grid .card { flex: 0 0 138px; width: 138px; scroll-snap-align: start; }
+    .featured-grid .poster { height: 190px; min-height: 190px; aspect-ratio: auto; padding: 9px; }
+    .featured-grid .movie-info { padding: 8px 9px 10px; }
+    .featured-grid .movie-title { min-height: 2.3em; margin: 0; font-size: 13px; line-height: 1.2; }
+    .featured-grid .movie-meta { display: none; }
+    @media (max-width: 620px) {
+      .featured-shelf { padding: 14px; }
+      .featured-grid .card { flex-basis: 122px; width: 122px; }
+      .featured-grid .poster { height: 170px; min-height: 170px; }
+    }
+
+    .card {
+      overflow: hidden;
+      border: 1px solid var(--borda);
+      border-radius: 13px;
+      background: var(--painel);
+      box-shadow: 0 12px 30px rgba(0,0,0,.2);
+      transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(132,119,255,.75);
+      box-shadow: 0 18px 40px rgba(0,0,0,.4);
+    }
+
+    .poster {
+      aspect-ratio: 2 / 3;
+      min-height: 205px;
+      display: flex;
+      align-items: end;
+      padding: 13px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      isolation: isolate;
+      background-color: #25212b;
+      background-image: var(--poster-art);
+      background-size: cover;
+      background-position: center;
+    }
+
+    .poster--noite { --poster-art: radial-gradient(ellipse at 50% 27%, rgba(255,196,106,.95) 0 2%, transparent 22%), linear-gradient(180deg, transparent 25%, rgba(7,7,11,.12) 40%, #09090e 100%), linear-gradient(115deg, #17152d, #514395 48%, #131625); }
+    .poster--chuva { --poster-art: radial-gradient(ellipse at 66% 35%, rgba(255,91,92,.82) 0 3%, transparent 24%), linear-gradient(180deg, transparent 18%, rgba(6,11,18,.22) 46%, #070b12 100%), linear-gradient(125deg, #151b38, #4f4b88 48%, #17152c); }
+    .poster--domingo { --poster-art: radial-gradient(ellipse at 70% 28%, #ffc46d 0 5%, transparent 29%), linear-gradient(180deg, transparent 20%, rgba(25,14,11,.14) 49%, #160d10 100%), linear-gradient(135deg, #513f86, #8171db 52%, #201b40); }
+    .poster--codigo { --poster-art: radial-gradient(ellipse at 50% 32%, rgba(48,223,214,.8) 0 2%, transparent 25%), linear-gradient(180deg, transparent 17%, rgba(5,10,17,.2) 45%, #080b12 100%), linear-gradient(130deg, #111d3b, #3445a1 47%, #17152f); }
+    .poster--luzes { --poster-art: radial-gradient(ellipse at 50% 31%, rgba(255,195,95,.9) 0 3%, transparent 27%), linear-gradient(180deg, transparent 20%, rgba(14,10,12,.25) 48%, #0c0b10 100%), linear-gradient(135deg, #201a40, #6254a6 50%, #15172f); }
+
+    .poster-image {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .poster::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      inset: 10% 14% 24%;
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 48% 48% 8px 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,.11), transparent 75%);
+      box-shadow: 0 0 40px rgba(255,255,255,.07);
+      opacity: .7;
+    }
+
+    .poster::before {
+      content: "";
+      z-index: 1;
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(0deg, rgba(0,0,0,.8), transparent 65%);
+    }
+
+    .poster-label {
+      z-index: 2;
+      padding: 5px 8px;
+      border-radius: 5px;
+      background: var(--vermelho);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      box-shadow: 0 4px 14px rgba(0,0,0,.3);
+    }
+
+    .movie-info { padding: 13px; }
+
+    .movie-title {
+      margin-bottom: 6px;
+      font: 600 16px "Space Grotesk", sans-serif;
+      min-height: 2.5em;
+    }
+
+    .movie-meta {
+      display: flex;
+      justify-content: space-between;
+      color: var(--suave);
+      font-size: 12px;
+    }
+
+    .rating { color: #ffd166; }
+
+    .empty {
+      display: none;
+      padding: 30px;
+      color: var(--suave);
+      text-align: center;
+    }
+
+    footer {
+      padding: 25px 0;
+      border-top: 1px solid var(--borda);
+      color: var(--suave);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: repeat(3, 1fr); }
+      nav { gap: 14px; }
+      .search { width: 160px; }
+    }
+
+    @media (max-width: 620px) {
+      header { height: auto; min-height: 70px; flex-wrap: wrap; gap: 12px; padding: 14px 0; }
+      nav { order: 3; width: 100%; justify-content: space-between; font-size: 12px; }
+      .search { width: 165px; }
+      .hero { min-height: 390px; }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .poster { min-height: 195px; }
+      .section-heading { align-items: start; flex-direction: column; }
+    }
+
+    @media (max-width: 380px) {
+      .poster { height: 175px; }
+      .search { width: 145px; }
+    }
+
+
+    .poster { cursor: pointer; }
+    .details-dialog {
+      position: fixed; inset: 0;
+      width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none;
+      margin: 0; padding: 0; overflow: auto; color: #17202a; background: #0b1020;
+      border: 0; border-radius: 0; box-shadow: none;
+    }
+    .details-dialog::backdrop { background: rgba(8,12,20,.45); }
+    .details-layout { width: 100%; min-height: 100vh; min-height: 100dvh; position: relative; display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr); align-content: center; align-items: center; gap: clamp(24px, 3vw, 40px); margin: 0; padding: clamp(22px, 3vw, 42px); overflow-x: hidden; isolation: isolate; background: transparent; }
+    .details-layout::before { content: ""; position: absolute; z-index: -2; inset: 0; background-image: var(--detalhe-background); background-size: cover; background-position: center center; background-repeat: no-repeat; filter: none; opacity: 1; }
+    .details-layout::after { content: ""; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: transparent; }
+    .details-heading { width: 100%; margin: 0 0 18px; }
+    .details-poster { position: relative; z-index: 1; grid-column: 1; grid-row: 1; display: block; width: 100%; height: auto; max-height: min(76vh, 700px); aspect-ratio: 2 / 3; justify-self: center; object-fit: cover; object-position: center; border: 1px solid rgba(25,28,38,.2); border-radius: 8px; box-shadow: 0 12px 32px rgba(10,12,20,.28); }
+    .details-titleblock { min-width: 0; padding: 0; }
+    .details-titleblock h2 { margin: 0 0 6px; color: #101820; font-size: clamp(1.8rem, 3.1vw, 2.5rem); line-height: 1.12; overflow-wrap: anywhere; }
+    .details-copy { position: relative; z-index: 2; grid-column: 2; grid-row: 1; justify-self: stretch; width: 100%; min-height: 0; margin: 0; padding: clamp(16px, 2.2vw, 28px); display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; text-align: left; color: #f5f3f7; background: rgba(10,14,27,.32); border: 1px solid rgba(255,255,255,.18); border-radius: 12px; box-shadow: 0 12px 32px rgba(10,12,20,.16); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+    .details-copy p { max-width: 920px; color: #f0f1f7; line-height: 1.65; font-size: clamp(.96rem, 1.2vw, 1.05rem); text-shadow: 0 1px 5px rgba(0,0,0,.65); }
+    #detalhesMeta { margin: 0; color: #e5e8f0; font-size: .9rem; }
+    .details-synopsis-title { margin: 4px 0 6px; color: #fff; font-size: 1.05rem; letter-spacing: .02em; }
+    .details-cast { position: relative; z-index: 2; grid-column: 1 / -1; grid-row: 2; width: 100%; margin: 0; padding: 16px 18px; text-align: left; background: rgba(10,14,27,.32); border: 1px solid rgba(255,255,255,.18); border-radius: 12px; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+    .details-cast h3 { margin: 0 0 10px; text-align: left; color: #fff; font-size: 1.05rem; letter-spacing: .02em; }
+    .cast-grid { display: flex; gap: 12px; overflow-x: auto; overflow-y: hidden; padding: 2px 2px 10px; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: #7868f6 rgba(255,255,255,.12); }
+    .cast-grid::-webkit-scrollbar { height: 6px; }
+    .cast-grid::-webkit-scrollbar-thumb { border-radius: 8px; background: #7868f6; }
+    .cast-card { flex: 0 0 96px; width: 96px; margin: 0; overflow: hidden; text-align: center; scroll-snap-align: start; }
+    .cast-card img, .cast-avatar { display: grid; place-items: center; width: 76px; height: 76px; margin: 0 auto 7px; border: 1px solid rgba(255,255,255,.18); border-radius: 10px; object-fit: cover; object-position: center 20%; background: #171a28; box-shadow: 0 4px 14px rgba(0,0,0,.22); }
+    .cast-avatar { color: #e8e5ff; background: linear-gradient(145deg, #302958, #171a28 72%); font-size: 1.25rem; font-weight: 800; }
+    .cast-card figcaption { padding: 0 2px; }
+    .cast-card strong, .cast-card span { display: block; }
+    .cast-card strong { color: #17202a; }
+    .cast-card strong { overflow: hidden; font-size: .76rem; line-height: 1.2; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .cast-card span { overflow: hidden; margin-top: 3px; color: #4e5c68; font-size: .68rem; line-height: 1.2; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .cast-status { flex: 0 0 100%; color: #3d4852; text-align: left; }
+    .cast-retry { margin-left: 8px; padding: 4px 9px; border: 1px solid rgba(197,187,255,.45); border-radius: 8px; color: #e8e5ff; background: rgba(120,104,246,.2); font: inherit; font-size: .78rem; cursor: pointer; }
+    .details-close {
+      position: fixed; z-index: 2; top: 20px; right: 24px; width: 46px; height: 46px;
+      border: 0; border-radius: 50%; color: white; background: rgba(10,12,20,.82);
+      font-size: 1.7rem; cursor: pointer;
+    }
+    .details-back {
+      grid-column: 1 / -1; grid-row: 5; justify-self: center;
+      margin-top: 18px; padding: 12px 18px; border: 0; border-radius: 8px;
+      background: #7868f6; color: #fff; font: inherit; font-weight: 700; cursor: pointer;
+    }
+    .details-watch {
+      display: inline-flex; align-items: center; gap: 10px; margin: 16px 0 4px;
+      padding: 12px 24px; border: 1px solid rgba(255,255,255,.45); border-radius: 999px;
+      color: white; background: rgba(7,12,20,.56); font: inherit; font-weight: 800;
+      letter-spacing: .14em; cursor: pointer; box-shadow: 0 0 28px rgba(45,190,255,.22);
+    }
+    .details-watch:hover { background: #7868f6; }
+    .details-watch-icon { font-size: 1.25rem; }
+    .details-notice { min-height: 1.5em; margin: 4px 0 !important; color: #c7c9d6 !important; font-size: .86rem !important; }
+    .player-placeholder { position: relative; z-index: 2; grid-column: 1 / -1; grid-row: 3; justify-self: center; width: min(100%, 900px); margin: 0 auto; }
+    .player-placeholder[hidden] { display: none !important; }
+    .player-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border: 1px solid rgba(255,255,255,.2); border-radius: 12px; background: #080b14; box-shadow: 0 14px 38px rgba(0,0,0,.34); }
+    .player-frame > img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: brightness(.48); }
+    .player-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; color: #fff; text-align: center; text-shadow: 0 2px 10px rgba(0,0,0,.8); }
+    .player-play-icon { display: grid; place-items: center; width: 72px; height: 72px; padding-left: 5px; border: 2px solid rgba(255,255,255,.88); border-radius: 50%; background: rgba(120,104,246,.82); font-size: 1.8rem; box-shadow: 0 0 28px rgba(120,104,246,.48); }
+    .player-label { font-size: .9rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .player-caption { margin: 8px 0 0 !important; color: #d1d5e3 !important; font-size: .84rem !important; }
+    .details-comments { position: relative; z-index: 2; grid-column: 1 / -1; grid-row: 4; width: 100%; max-width: 900px; margin: 0 auto; padding: 14px 18px; text-align: left; background: rgba(10,14,27,.32); border: 1px solid rgba(255,255,255,.18); border-radius: 12px; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
+    .comments-tablist { display: flex; gap: 8px; border-bottom: 1px solid rgba(255,255,255,.16); }
+    .comments-tab { padding: 9px 14px; border: 0; border-bottom: 2px solid #7868f6; color: #fff; background: transparent; font: inherit; font-weight: 750; cursor: default; }
+    .comments-panel { padding: 10px 0 4px; }
+    .comments-hint { margin: 0 0 10px !important; color: #c5bbff !important; font-size: .82rem !important; }
+    .comments-form { display: grid; gap: 7px; width: 100%; }
+    .comments-form label { color: #ececf5; font-size: .84rem; font-weight: 650; }
+    .comments-form input, .comments-form textarea { width: 100%; padding: 10px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 8px; color: #f7f7fb; background: rgba(9,12,24,.78); font: inherit; font-size: .92rem; }
+    .comments-form textarea { min-height: 76px; resize: vertical; }
+    .comments-form input:focus, .comments-form textarea:focus { outline: 2px solid #7868f6; outline-offset: 1px; }
+    .comments-submit { justify-self: start; margin-top: 3px; padding: 9px 15px; border: 0; border-radius: 8px; color: #fff; background: #7868f6; font: inherit; font-weight: 700; cursor: pointer; }
+    .comments-feedback { min-height: 1.2em; margin: 0 !important; color: #d5d0ff !important; font-size: .82rem !important; }
+    .comments-list { display: grid; gap: 9px; margin-top: 10px; }
+    .comment-item { padding: 10px 12px; border: 1px solid rgba(255,255,255,.12); border-radius: 8px; background: rgba(9,12,24,.58); }
+    .comment-item header { display: flex; justify-content: space-between; gap: 12px; color: #e8e5ff; font-size: .82rem; }
+    .comment-item time { color: #b9bac7; font-size: .74rem; }
+    .comment-item p { margin: 6px 0 0 !important; color: #f0f1f7; font-size: .9rem !important; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .comments-empty { color: #c6c8d3 !important; font-size: .88rem !important; }
+    .details-tag { color: #c5bbff; font-size: .82rem; font-weight: 800; text-transform: uppercase; letter-spacing: .18em; }
+    @media (max-width: 650px) {
+      .details-layout { grid-template-columns: minmax(92px, 30vw) minmax(0, 1fr); grid-template-rows: auto auto auto auto auto; align-content: start; gap: 12px; padding: 68px 14px 28px; }
+      .details-layout::after { background: transparent; }
+      .details-poster { max-height: 34vh; }
+      .details-titleblock { padding-top: 0; }
+      .details-titleblock h2 { font-size: clamp(1.3rem, 5.4vw, 2.2rem); }
+      .details-copy { min-height: 0; padding: 14px 12px; align-items: stretch; text-align: left; }
+      .details-cast, .player-placeholder, .details-comments, .details-back { grid-column: 1 / -1; }
+      .details-cast { grid-row: 2; padding: 12px; }
+      .player-placeholder { grid-row: 3; }
+      .details-comments { grid-row: 4; padding: 12px; }
+      .details-back { grid-row: 5; }
+      .details-cast h3 { text-align: left; }
+      .details-copy p { line-height: 1.6; }
+      .details-copy p, .details-copy label { font-size: .88rem; }
+      .details-close { top: 14px; right: 14px; }
+    }
+
+    .details-tag { color: #c5bbff; }
+    .details-titleblock h2 { color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,.7); }
+    .details-copy p, #detalhesMeta, .details-synopsis-title { color: #f1f2f7; }
+    .details-cast h3, .cast-card strong { color: #fff; text-shadow: 0 1px 5px rgba(0,0,0,.75); }
+    .cast-card span, .cast-status { color: #e4e1ef; }
+    .cast-avatar { color: #e8e5ff; background: linear-gradient(145deg, #302958, #171a28 72%); }
+    .details-watch { color: #fff; background: #062640; border-color: rgba(6,38,64,.45); box-shadow: none; }
+    .details-watch:hover { background: #124466; }
+    .details-notice, .player-caption { color: #e1e4ef !important; }
+    .player-frame { border-color: rgba(16,35,48,.24); box-shadow: 0 10px 28px rgba(10,20,28,.16); }
+    .comments-tablist { border-color: rgba(16,35,48,.22); }
+    .comments-tab { color: #fff; }
+    .comments-hint, .comments-feedback, .comments-empty { color: #e1e4ef !important; }
+    .comments-form label { color: #f1f2f7; }
+    .comments-form input, .comments-form textarea { color: #f7f7fb; background: rgba(9,12,24,.78); border-color: rgba(255,255,255,.2); }
+    .comment-item { background: rgba(9,12,24,.58); border-color: rgba(255,255,255,.16); }
+    .comment-item header { color: #e8e5ff; }
+    .comment-item time { color: #b9bac7; }
+    .comment-item p { color: #26333d; }
+
+
+  </style>
+</head>
+
+<body>
+  <header class="container">
+    <a class="logo" href="#">
+      <span class="logo-icon">▶</span>
+      Dry filmes
+    </a>
+
+    <nav>
+      <a href="#filmes">Filmes</a>
+      <a href="#series">Séries</a>
+      <a href="#favoritos">Favoritos</a>
+    </nav>
+
+    <input
+      class="search"
+      id="busca"
+      type="search"
+      placeholder="Buscar título..."
+      aria-label="Buscar filmes e séries"
+    >
+  </header>
+
+  <section class="hero">
+    <div class="container hero-content">
+      <span class="tag">Sua próxima sessão começa aqui</span>
+      <h1>Histórias que ficam com você.</h1>
+      <p>
+        Descubra filmes e séries para cada momento: uma aventura para maratonar,
+        uma comédia para relaxar ou aquela história que você não esquece.
+      </p>
+      <a class="button" href="#filmes">Explorar catálogo →</a>
+    </div>
+  </section>
+
+  <main class="container">
+    <section class="section" id="filmes">
+      <section class="featured-shelf" id="secaoDestaques" aria-labelledby="tituloDestaques">
+        <h3 id="tituloDestaques">Em destaque</h3>
+        <div class="grid featured-grid" id="gradeDestaques" aria-label="Destaques. Arraste para ver mais t?tulos." tabindex="0"></div>
+      </section>
+
+      <div class="section-heading">
+        <div>
+          <h2>Cat&aacute;logo</h2>
+          <p>Use os filtros para encontrar sua pr&oacute;xima sess&atilde;o.</p>
+        </div>
+      </div>
+
+      <div class="filters" aria-label="Filtrar catálogo">
+        <button class="filter active" data-filter="todos">Todos</button>
+        <button class="filter" data-filter="filme">Filmes</button>
+        <button class="filter" data-filter="serie">Séries</button>
+        <button class="filter" data-filter="acao">Ação</button>
+        <button class="filter" data-filter="drama">Drama</button>
+        <button class="filter" data-filter="comedia">Comédia</button>
+        <button class="filter" data-filter="terror">Terror</button>
+        <button class="filter" data-filter="marvel">Marvel</button>
+      </div>
+
+      <div class="grid" id="catalogo">
+        
+
+        <article class="card" data-tipo="filme" data-generos="acao" data-backdrop="https://www.framerated.co.uk/frwpcontent/uploads/2018/11/firstblood02.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://br.web.img3.acsta.net/pictures/14/07/09/09/52/507783.jpg" alt="Pôster de Rambo: Programado para Matar" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Rambo: Programado para Matar</h3>
+            <div class="movie-meta"><span>1982 · Ação</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="acao" data-backdrop="https://image.pmgstatic.com/cache/resized/w663/files/images/film/photos/160/216/160216313_42baff.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://www.originalfilmart.com/cdn/shop/products/Rambo_First_Blood_Part_2_1985_original_film_art_a_600x.JPG?v=1551797172" alt="Pôster de Rambo II: A Missão" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Rambo II: A Missão</h3>
+            <div class="movie-meta"><span>1985 · Ação</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="acao" data-backdrop="https://m.media-amazon.com/images/M/MV5BMzZiYTJkNmEtMGIyOC00ZjJmLTg2MDgtZWU3M2FlZWJhODZlXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://m.media-amazon.com/images/M/MV5BYmQ3OGQxNTctMjljNy00YTgyLWJhNTQtY2UyNGM3MjIwNDQwXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg" alt="Pôster de Rambo III" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Rambo III</h3>
+            <div class="movie-meta"><span>1988 · Ação</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="acao" data-backdrop="https://image.tmdb.org/t/p/original/zzAErvRSasbEpe3biSLjhilvBlk.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://media-cache.cinematerial.com/p/500x/kbjshbzj/rambo-brazilian-dvd-movie-cover.jpg?v=1456545051" alt="Capa brasileira de Rambo IV" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Rambo IV</h3>
+            <div class="movie-meta"><span>2008 · Ação</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="acao" data-backdrop="https://cdni.fancaps.net/file/fancaps-movieimages/3937615.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://www.ucicinemas.com.br/Content/Upload/Filmes/Posters/9478/filme_9478.jpg" alt="Pôster de Rambo: Até o Fim" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Rambo: Até o Fim</h3>
+            <div class="movie-meta"><span>2019 · Ação</span></div>
+          </div>
+        </article>
+        
+
+        
+
+        
+
+        
+        <article class="card" data-tipo="filme" data-generos="acao drama" data-backdrop="https://image.tmdb.org/t/p/original/sctvs9cUwJD15qlTlrsh2BXsK75.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/w500/iQ5ztdjvteGeboxtmRdXEChJOHh.jpg" alt="P&ocirc;ster de Scarface" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Scarface</h3>
+            <div class="movie-meta"><span>1983 &middot; Crime e drama</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="comedia acao" data-backdrop="https://de.web.img3.acsta.net/pictures/16/07/04/17/57/440194.jpg" data-sinopse="Antes de se tornar agente da CIA, Bob Stone era um jovem t?mido que sofria bullying na escola. Anos depois, ele reencontra Calvin Joyner, um antigo colega que hoje trabalha como contador, e pede sua ajuda em uma miss?o ultrassecreta. Juntos, os dois se envolvem em uma aventura de espionagem cheia de a??o e situa??es inesperadas.">
+          <div class="poster">
+            <img class="poster-image" src="https://br.web.img2.acsta.net/pictures/16/04/26/20/31/012917.png" alt="P?ster de Um Espi?o e Meio" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Um Espi?o e Meio</h3>
+            <div class="movie-meta"><span>2016 &middot; A??o e com?dia</span></div>
+          </div>
+        </article>
+
+
+
+
+        
+
+        
+
+        
+
+        
+
+        
+        <article class="card" data-tipo="filme" data-generos="terror" data-backdrop="https://m.media-amazon.com/images/M/MV5BZDJmMzI0NGYtYTE4Yy00MzExLThmYTktYWNiYzFlMWYwNGY4XkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/w500/mQVIIUXHo3Qpd6nu0api7UyMpas.jpg" alt="P&ocirc;ster de P&acirc;nico na Floresta" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">P&acirc;nico na Floresta</h3>
+            <div class="movie-meta"><span>2003 &middot; Terror</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="terror" data-backdrop="https://m.media-amazon.com/images/M/MV5BNDFhZjFhY2EtYzA0Yi00MDE3LWFjMGQtZTRiYmVmODliYmQxXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/w500/4Ra0ejDcncJTZJfHOVRV2bm4DMd.jpg" alt="P&ocirc;ster de P&acirc;nico na Floresta 2" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">P&acirc;nico na Floresta 2: Floresta do Mal</h3>
+            <div class="movie-meta"><span>2007 &middot; Terror</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="terror" data-backdrop="https://img.tvspielfilm.de/bd/fd/f4/56fd555fea60e57ff2f4fdbd.jpeg?im=Resize%2Cwidth%3D970">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/w500/cYGbdR3fWCqWTVxLN9UAkLj7Zc4.jpg" alt="P&ocirc;ster de P&acirc;nico na Floresta 3" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">P&acirc;nico na Floresta 3</h3>
+            <div class="movie-meta"><span>2009 &middot; Terror</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="terror" data-backdrop="https://www.syfy.com/sites/syfy/files/styles/scale_1280/public/191002_4041353_wrong_turn_4_bloody_beginnings_anvver_7_800x450_1799770179834.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/w500/6yTKpQpSzxWweaVEvhZMfGO0m1Z.jpg" alt="P&ocirc;ster de P&acirc;nico na Floresta 4" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">P&acirc;nico na Floresta 4: Origens Sangrentas</h3>
+            <div class="movie-meta"><span>2011 &middot; Terror</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="terror" data-backdrop="https://www.kinonews.ru/insimgs/shotimg/shotimg27240_1.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/w500/58cy7VUMOiaUKClQ01Slu3HykAA.jpg" alt="P&ocirc;ster de P&acirc;nico na Floresta 5" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">P&acirc;nico na Floresta 5</h3>
+            <div class="movie-meta"><span>2012 &middot; Terror</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="terror" data-backdrop="https://horrory.cz/galerie/p/pach-krve-6/pach-krve-6_0.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/w500/vjsLHvwSjhTe1HEd7b2X0Yzk0zD.jpg" alt="P&ocirc;ster de P&acirc;nico na Floresta 6" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">P&acirc;nico na Floresta 6</h3>
+            <div class="movie-meta"><span>2014 &middot; Terror</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="filme" data-generos="terror" data-backdrop="https://m.media-amazon.com/images/S/pv-target-images/ca5e02d61ff50374133a82aa80370d314104734f334ce9581dc705aa63eddf11._SX1080_FMjpg_.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/w500/j29PMbzHVnz6KhjVOUUWkprvkTp.jpg" alt="P&ocirc;ster de P&acirc;nico na Floresta: A Funda&ccedil;&atilde;o" loading="lazy">
+            <span class="poster-label">Filme</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">P&acirc;nico na Floresta: A Funda&ccedil;&atilde;o (2021)</h3>
+            <div class="movie-meta"><span>2021 &middot; Terror</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="serie" data-generos="drama" data-backdrop="https://image.tmdb.org/t/p/w780/jL1QWaui1PTgLWmjR1GVeJE7PiV.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/original/eT0D3GkAnq0AjA9ok0KE1GfGQhA.jpg" alt="Pôster da série O Mentalista" loading="lazy">
+            <span class="poster-label">Série</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">O Mentalista</h3>
+            <div class="movie-meta"><span>2008 · Drama policial</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="serie" data-generos="acao" data-backdrop="https://is1-ssl.mzstatic.com/image/thumb/lEKv_bNa8mzxWKwlrTpBag/1200x675.jpg">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/original/5f2mRNqKFgtV5AWnC0OSIkYbzw0.jpg" alt="Pôster da série Supernatural (Sobrenatural)" loading="lazy">
+            <span class="poster-label">Série</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Supernatural (Sobrenatural)</h3>
+            <div class="movie-meta"><span>2005 · Ação e fantasia</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="serie" data-generos="drama fantasia" data-backdrop="https://images.plex.tv/photo?scale=1&size=large-1920&url=https%3A%2F%2Fimage.tmdb.org%2Ft%2Fp%2Foriginal%2F80CKoa5pB2sgCacDudK1I3OvEEs.jpg" data-sinopse="Lucifer Morningstar abandona o Inferno e passa a viver em Los Angeles, onde ajuda a detetive Chloe Decker a investigar crimes enquanto lida com sua propria familia celestial.">
+          <div class="poster">
+            <img class="poster-image" src="https://static.tvmaze.com/uploads/images/original_untouched/346/865655.jpg" alt="Poster da serie Lucifer" loading="lazy">
+            <span class="poster-label">Serie</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Lucifer</h3>
+            <div class="movie-meta"><span>2016 · Drama e fantasia</span></div>
+          </div>
+        </article>
+
+        <article class="card" data-tipo="serie" data-generos="drama acao" data-backdrop="https://images.plex.tv/photo?scale=2&size=large-720&url=https%3A%2F%2Fimage.tmdb.org%2Ft%2Fp%2Foriginal%2FhhILJrTzm57V3vQr0URURlsYnFF.jpg" data-sinopse="Depois de ser mordido por um lobisomem, o adolescente Scott McCall tenta equilibrar a escola e as amizades com seus novos poderes e os perigos sobrenaturais de Beacon Hills.">
+          <div class="poster">
+            <img class="poster-image" src="https://image.tmdb.org/t/p/original/aZUgySItsUQ9SooYhPuy44V1nMR.jpg" alt="Poster da serie Teen Wolf" loading="lazy">
+            <span class="poster-label">Serie</span>
+          </div>
+          <div class="movie-info">
+            <h3 class="movie-title">Teen Wolf</h3>
+            <div class="movie-meta"><span>2011 · Drama sobrenatural</span></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="empty" id="mensagemVazia">
+        Nenhum título encontrado. Tente outra busca ou categoria.
+      </div>
+    </section>
+
+    <section class="section" id="series">
+      <div class="section-heading">
+        <div>
+          <h2>Uma ideia para maratonar</h2>
+          <p>Escolha uma história, prepare a pipoca e dê play.</p>
+        </div>
+      </div>
+      <a class="button" href="#catalogo">Ver recomendações →</a>
+      <section class="suggestion-board" aria-labelledby="tituloSugestoes">
+        <div class="suggestion-heading">
+          <div>
+            <h3 id="tituloSugestoes">Sugira um filme para a maratona</h3>
+            <p>Deixe uma ideia e conte o que a galera deveria assistir.</p>
+          </div>
+          <span class="suggestion-local-note">Sugest&otilde;es neste navegador</span>
+        </div>
+        <form class="suggestion-form" id="formSugestoes">
+          <div class="suggestion-fields">
+            <label>Filme que voc&ecirc; quer assistir
+              <input id="tituloSugestao" name="titulo" type="text" maxlength="100" required placeholder="Ex.: um filme de aventura">
+            </label>
+            <label>Seu nome (opcional)
+              <input id="nomeSugestao" name="nome" type="text" maxlength="50" placeholder="Visitante">
+            </label>
+          </div>
+          <label for="comentarioSugestao">Coment&aacute;rio</label>
+          <textarea id="comentarioSugestao" name="comentario" rows="3" maxlength="500" placeholder="Por que voc&ecirc; quer assistir? Deixe sua ideia para a sess&atilde;o."></textarea>
+          <button class="suggestion-submit" type="submit">Enviar sugest&atilde;o</button>
+          <p class="suggestion-feedback" id="feedbackSugestoes" aria-live="polite"></p>
+        </form>
+        <div class="suggestion-list" id="listaSugestoes" aria-live="polite"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer id="favoritos">
+    <div class="container">Dry Filmes — feito para quem ama boas histórias. © 2026</div>
+  </footer>
+
+
+
+  <dialog class="details-dialog" id="detalhesTitulo" aria-labelledby="detalhesNome">
+    <button class="details-close" type="button" aria-label="Fechar detalhes">&times;</button>
+    <div class="details-layout">
+      <img class="details-poster" id="detalhesPoster" alt="">
+      <div class="details-copy">
+        <div class="details-heading">
+          <div class="details-titleblock">
+            <span class="details-tag" id="detalhesTipo"></span>
+            <h2 id="detalhesNome"></h2>
+            <p id="detalhesMeta"></p>
+          </div>
+        </div>
+        <h3 class="details-synopsis-title" id="tituloSinopse">Sinopse</h3>
+        <p id="detalhesSinopse"></p>
+        <button class="details-watch" id="assistirTitulo" type="button"><span class="details-watch-icon" aria-hidden="true">&#9654;</span> ASSISTIR</button>
+        <p class="details-notice" id="avisoReproducao" aria-live="polite"></p>
+      </div>
+      <section class="details-cast" aria-labelledby="tituloElenco">
+        <h3 id="tituloElenco">Elenco principal</h3>
+        <div class="cast-grid" id="elencoAtores" aria-label="Elenco. Arraste para ver mais atores." tabindex="0" aria-live="polite"></div>
+      </section>
+      <section class="player-placeholder" id="playerPlaceholder" hidden aria-label="Pr&eacute;via do t&iacute;tulo">
+          <div class="player-frame">
+            <img id="imagemPlayer" alt="" loading="lazy">
+            <div class="player-overlay" aria-hidden="true">
+              <span class="player-play-icon">&#9654;</span>
+              <span class="player-label">V&iacute;deo ainda n&atilde;o dispon&iacute;vel</span>
+            </div>
+          </div>
+          <p class="player-caption">O filme ainda n&atilde;o foi adicionado para reprodu&ccedil;&atilde;o.</p>
+      </section>
+      <section class="details-comments" aria-label="Coment&aacute;rios do filme">
+          <div class="comments-tablist" role="tablist" aria-label="Abas do detalhe">
+            <button class="comments-tab active" id="abaComentarios" type="button" role="tab" aria-selected="true" aria-controls="painelComentarios">Coment&aacute;rios</button>
+          </div>
+          <div class="comments-panel" id="painelComentarios" role="tabpanel" aria-labelledby="abaComentarios">
+            <p class="comments-hint">Coment&aacute;rios salvos neste navegador.</p>
+            <form class="comments-form" id="formComentarios">
+              <label for="nomeComentario">Seu nome (opcional)</label>
+              <input id="nomeComentario" name="nome" type="text" maxlength="50" placeholder="Visitante">
+              <label for="textoComentario">O que achou do filme?</label>
+              <textarea id="textoComentario" name="comentario" rows="3" maxlength="600" required placeholder="Escreva seu coment&aacute;rio..."></textarea>
+              <button class="comments-submit" type="submit">Publicar coment&aacute;rio</button>
+              <p class="comments-feedback" id="feedbackComentarios" aria-live="polite"></p>
+            </form>
+            <div class="comments-list" id="listaComentarios" aria-live="polite"></div>
+          </div>
+      </section>
+      <button class="details-back" id="voltarCatalogo" type="button">Voltar ao catalogo</button>
+    </div>
+  </dialog>
+
+  <script>
+    const catalogoMarvel = [
+      ["Homem de Ferro",2008,"https://image.tmdb.org/t/p/original/gDKjDC7udT18B1Do4ePlsDk2Rug.jpg","Depois de escapar de um sequestro com uma armadura improvisada, Tony Stark volta para casa decidido a mudar a indústria de armas que o tornou famoso. Enquanto aperfeiçoa a tecnologia, descobre que pessoas próximas estão ligadas a uma conspiração. Sua transformação em herói exige que assuma responsabilidade pelas consequências de suas próprias invenções.","mcu","https://tvgidsassets.nl/v387/upload/i/origineel/iron-man-763146882.jpg"],
+      ["O Incrivel Hulk",2008,"https://image.tmdb.org/t/p/w500/v1UXe9WlwkkZ5YrffUSPdYNeJz3.jpg","Bruce Banner vive escondido e procura controlar a transformação que ocorre quando seu corpo é tomado pela raiva. Perseguido pelo general Ross, ele retorna aos Estados Unidos em busca da cientista Betty Ross e de uma cura. Quando um experimento cria uma criatura igualmente poderosa, Banner precisa deter a ameaça sem perder o controle de si mesmo.","mcu","https://www.ecartelera.com/carteles/fondos/1800/1801-n2.jpg"],
+      ["Homem de Ferro 2",2010,"https://images.justwatch.com/poster/134864332/s718/homem-de-ferro-2.jpg","Com sua identidade revelada, Tony Stark enfrenta a pressão do governo para entregar a armadura e o envenenamento causado pelo reator em seu peito. Ivan Vanko surge com uma tecnologia semelhante e uma vingança ligada à história das famílias Stark e Vanko. Com a ajuda de Pepper Potts e Natasha Romanoff, Tony precisa resolver seus problemas e impedir um ataque em larga escala.","mcu","https://m.media-amazon.com/images/M/MV5BMjIxOTQ5NDYyNl5BMl5BanBnXkFtZTcwMDY5OTMxMw%40%40._V1_.jpg"],
+      ["Thor",2011,"https://m.media-amazon.com/images/M/MV5BMGVhMzUzNDItNWE3Mi00NGM4LWE2NDItYWQ3Y2Q5YzEzYWQzXkEyXkFqcGc%40._V1_.jpg","Thor, príncipe de Asgard, tem sua coroação interrompida por um ataque dos Gigantes de Gelo. Sua reação impulsiva ameaça reacender uma guerra, e Odin o bane para a Terra, retirando seus poderes e seu martelo. Enquanto conhece a cientista Jane Foster, Thor aprende humildade; em Asgard, Loki aproveita a ausência do irmão para disputar o trono.","mcu","https://m.media-amazon.com/images/M/MV5BMTQ2NTQzMzA1OV5BMl5BanBnXkFtZTcwNzY0ODQ5NA%40%40._V1_.jpg"],
+      ["Capitao America: O Primeiro Vingador",2011,"https://m.media-amazon.com/images/M/MV5BZGM2ZTEwMzItNDBlMy00Mjk1LWFmZDItMGY0NDkzMTU2OTJhXkEyXkFqcGc%40._V1_.jpg","Determinado a servir durante a Segunda Guerra, Steve Rogers recebe um tratamento experimental que o transforma em um soldado extraordinário. Como Capitão América, ele lidera uma missão para deter Johann Schmidt e a Hydra, que planejam usar uma fonte de energia misteriosa como arma. A luta testa a coragem de Steve e o vínculo com seu melhor amigo, Bucky Barnes.","mcu","https://ilarge.lisimg.com/image/7721069/740full-captain-america%3A-the-first-avenger-screenshot.jpg"],
+      ["Os Vingadores",2012,"https://www.ucicinemas.com.br/Content/Upload/Filmes/Posters/4067/filme_4067.jpg","Quando Loki chega à Terra com um exército e tenta dominar o planeta, Nick Fury reúne heróis que mal conseguem trabalhar em equipe. Homem de Ferro, Capitão América, Thor, Hulk, Viúva Negra e Gavião Arqueiro precisam superar conflitos pessoais para deter a invasão. A batalha em Nova York põe a cidade em risco e muda a forma como o mundo vê os super-heróis.","mcu","https://images.saymedia-content.com/.image/t_share/MTc0NDg2ODIwODcxNDE1MTQ0/film-review-the-avengers-2012.png"],
+      ["Homem de Ferro 3",2013,"https://image.tmdb.org/t/p/original/C7MZwRTjvEy7gkWcLJeBGZFE1w.jpg","Depois da batalha de Nova York, Tony Stark sofre com ansiedade e constrói armaduras sem parar, tentando se preparar para qualquer ameaça. Atentados atribuídos ao misterioso Mandarim atingem pessoas próximas a ele e destroem sua casa. Separado de seus recursos, Tony precisa improvisar, descobrir quem está por trás dos ataques e provar que seu heroísmo não depende da armadura.","mcu","https://image.tmdb.org/t/p/w780/wPgcxHNvnEEMXx94l2911gqZ4o9.jpg"],
+      ["Thor: O Mundo Sombrio",2013,"https://m.media-amazon.com/images/M/MV5BM2E2Nzk2MzUtY2ZkMy00YTczLTgyYWItNDdmNWNkNWRmNzNhXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Uma força antiga chamada Éter desperta dentro de Jane Foster e atrai os Elfos Negros, liderados por Malekith. Para proteger os Nove Reinos, Thor retorna a Asgard e procura a ajuda de Loki, apesar da desconfiança entre os irmãos. A aliança instável leva a uma batalha que pode mergulhar o universo em escuridão.","mcu","https://www.yayworld.com/sites/default/files/post/wysiwyg-images/2018/10/24/crop/thor_the_dark_world_thor_jane_and_loki.png"],
+      ["Capitao America: O Soldado Invernal",2014,"https://imagens.publicocdn.com/imagens.aspx/486609?tp=KM","Vivendo em Washington após despertar no mundo moderno, Steve Rogers começa a desconfiar das missões da S.H.I.E.L.D. Quando uma conspiração interna vem à tona, ele foge ao lado de Natasha Romanoff e Sam Wilson. A investigação os coloca diante do Soldado Invernal, um adversário ligado ao passado de Steve, e ameaça a segurança do planeta.","mcu","https://media.gq.com.tw/photos/5dbce242801fc800083fcf9c/16%3A9/w_2560%2Cc_limit/2014010254744729.jpg"],
+      ["Guardioes da Galaxia",2014,"https://m.media-amazon.com/images/M/MV5BOTAxMzBkYmYtM2JjZC00OTZhLThlYjItNjBmNTg1YTk4M2ZlXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Peter Quill rouba uma esfera cobiçada por Ronan, um líder disposto a usá-la para destruir um planeta. A perseguição reúne Peter, Gamora, Rocket, Groot e Drax, que começam como rivais e acabam presos à mesma missão. Para sobreviver e impedir uma catástrofe, o grupo precisa confiar uns nos outros e descobrir o verdadeiro poder do artefato.","mcu","https://www.disneypixar.fr/medias/fullsize/illustration_4dcf050918ef89bcc6f75663e0078cfe_les-gardiens-de-la-galaxie-2014.jpg"],
+      ["Vingadores: Era de Ultron",2015,"https://image.tmdb.org/t/p/original/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg","Tentando criar uma defesa contra novas ameaças, Tony Stark e Bruce Banner ativam uma inteligência artificial que passa a considerar a humanidade o problema. Ultron cria um plano de destruição e recruta os gêmeos Wanda e Pietro Maximoff. Os Vingadores precisam lidar com os poderes de Wanda, proteger uma nova forma de vida e impedir que uma cidade inteira seja lançada contra a Terra.","mcu","https://d1uzk9o9cg136f.cloudfront.net/f/16782943/rc/2018/04/05/23ed8831516cae7631eb914059b859ded6c37f33_xlarge.jpg"],
+      ["Homem-Formiga",2015,"https://br.web.img3.acsta.net/r_1280_720/pictures/15/06/15/14/51/405067.jpg","Após sair da prisão, Scott Lang tenta reconstruir a vida e se aproximar da filha, mas acaba envolvido no plano de Hank Pym. Com um traje que o reduz de tamanho e controla formigas, Scott aprende técnicas de infiltração para impedir que Darren Cross transforme a tecnologia em arma. A missão mistura um assalto de alto risco com a chance de Scott provar que pode ser herói e pai presente.","mcu","https://images.squarespace-cdn.com/content/v1/51b3dc8ee4b051b96ceb10de/1420643460205-NB2VQQUF26YVGD9J1LEO/ant-man-screenshot2.png"],
+      ["Capitao America: Guerra Civil",2016,"https://image.tmdb.org/t/p/original/z49hphjHrqYFaGbeZHrhnIlqGgW.jpg","Depois de uma operação causar destruição e vítimas, os governos propõem controlar as ações dos Vingadores. Steve Rogers teme que a supervisão impeça os heróis de agir quando necessário, enquanto Tony Stark apoia a responsabilização. A prisão de Bucky Barnes e uma conspiração aprofundam a divisão, levando os antigos aliados a um confronto que ameaça desmontar a equipe.","mcu","https://geeksofdoom.com/GoD/img/2016/03/captain-america-civil-war-trailer.jpg"],
+      ["Doutor Estranho",2016,"https://m.media-amazon.com/images/M/MV5BYTgxYTEzN2EtNGUwZi00ZWM2LWFlMmYtYWM0OTE0MWQyMWJkXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Um acidente grave compromete as mãos do cirurgião Stephen Strange, que procura tratamento em várias partes do mundo. Em Kamar-Taj, ele descobre as artes místicas e aprende que a realidade pode ser manipulada por forças além da ciência. Enquanto domina seus novos conhecimentos, Strange precisa proteger a Terra de uma entidade que ameaça romper as barreiras entre dimensões.","mcu","https://kinepolis.nl/sites/kinepolis.nl/files/styles/slider_16_9_960/public/stills/Doctor_Strange_Moviestill05_v2.jpg?itok=wiKjrTA5"],
+      ["Guardioes da Galaxia Vol. 2",2017,"https://image.tmdb.org/t/p/original/hXi3ExbRXnZCPbdHQkppQdcdMUF.jpg","Após uma missão dar errado, os Guardiões são salvos por Ego, que afirma ser o pai de Peter Quill. Peter parte para conhecer o planeta e a história de sua família, enquanto Gamora, Nebula e os demais enfrentam conflitos antigos e novas alianças. Aos poucos, o grupo percebe que a proposta de Ego esconde consequências perigosas e precisa decidir o que significa pertencer a uma família.","mcu","https://www.worldofgeekstuff.com/zeefubeg/2017/04/guardiansofthegalaxy2-starlord-gamora-dance.jpg"],
+      ["Thor: Ragnarok",2017,"https://ingresso-a.akamaihd.net/img/cinema/cartaz/19730-cartaz.jpg","Thor retorna a Asgard e encontra o reino sob o domínio de Hela, a deusa da morte. Desarmado e levado ao planeta Sakaar, precisa escapar de um torneio e reencontra Hulk, além de formar uma aliança com Valquíria e Loki. O grupo corre contra o tempo para voltar a Asgard e salvar seu povo antes que Hela destrua tudo.","mcu","https://ilarge.lisimg.com/image/14185215/1118full-thor%3A-ragnarok-screenshot.jpg"],
+      ["Pantera Negra",2018,"https://m.media-amazon.com/images/M/MV5BNzU5YzkxNWEtMzVmMS00NjhkLThjOGMtM2I5ODMzYTRjYjE5XkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Após a morte do rei T'Chaka, T'Challa volta a Wakanda para assumir o trono. Erik Killmonger revela uma disputa sobre o passado do país e sobre como seus recursos devem ser usados. T'Challa precisa defender o reino e reconsiderar o isolamento de Wakanda enquanto tenta impedir que o conflito se espalhe pelo mundo.","mcu","https://lumiere-a.akamaihd.net/v1/images/g_blackpanther_05_6c5c7070.jpeg?region=0%2C0%2C1200%2C560"],
+      ["Vingadores: Guerra Infinita",2018,"https://image.tmdb.org/t/p/original/lolDoBxs3FWN7dDmG0mqx8emQDh.jpg","Thanos atravessa o universo em busca das Joias do Infinito, decidido a reunir poder para impor seu plano à vida em todos os planetas. Os Vingadores e os Guardiões da Galáxia se dividem para proteger as joias e impedir que ele complete a manopla. A urgência da ameaça força alianças improváveis e põe em risco heróis e civilizações inteiras.","mcu","https://images.indianexpress.com/2018/11/thor-thanos-759.jpg?w=1200"],
+      ["Capita Marvel",2019,"https://conteudo.imguol.com.br/c/entretenimento/27/2019/02/04/poster-nacional-de-capita-marvel-1549301802876_v2_770x1100.jpg","Carol Danvers vive como integrante de uma força militar alienígena, mas começa a ter visões de uma vida que não recorda. Ao chegar à Terra nos anos 1990, ela cruza o caminho de Nick Fury e investiga a guerra entre Kree e Skrulls. A busca revela a origem de seus poderes e muda a compreensão de Carol sobre quem são os verdadeiros inimigos.","mcu","https://cdni.fancaps.net/file/fancaps-movieimages/3662997.jpg"],
+      ["Vingadores: Ultimato",2019,"https://image.tmdb.org/t/p/original/7jvlqGsxeMKscskuUZgKk0Kuv99.jpg","Após a devastação provocada por Thanos, os heróis sobreviventes tentam seguir em frente enquanto lidam com as perdas. Uma possibilidade de reverter o desaparecimento de bilhões de pessoas leva os Vingadores a planejar uma missão arriscada através de diferentes momentos de sua história. Para que o plano funcione, cada integrante precisa enfrentar escolhas antigas e o custo de tentar recuperar o que perdeu.","mcu","https://www.indyturk.com/sites/default/files/article/main_image/2020/12/01/522896-558001032.png"],
+      ["Homem-Aranha: Longe de Casa",2019,"https://m.media-amazon.com/images/M/MV5BYTMyNmZlODktNmExOS00NmEzLWJjOTMtOWQwODNkNGY2NDYwXkEyXkFqcGc%40._V1_.jpg","Peter Parker sai em uma viagem escolar pela Europa e espera fazer uma pausa na vida de super-herói. Nick Fury o recruta para ajudar Quentin Beck, que diz combater criaturas capazes de ameaçar diferentes regiões do planeta. Enquanto tenta conciliar amizade e responsabilidades, Peter precisa descobrir se pode confiar em Beck e decidir que tipo de herói deseja ser.","mcu","https://cdn.mos.cms.futurecdn.net/E4Kp5ELhzixR5FuFWM4nh3.jpg"],
+      ["Viúva Negra",2021,"https://m.media-amazon.com/images/M/MV5BYWJkOTRmMTMtOWU0Yi00MDQ0LWI0ZWItN2ZiMTEyMmJjMDhjXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Entre os acontecimentos de Guerra Civil e Guerra Infinita, Natasha Romanoff precisa fugir e enfrentar as consequências de sua vida como agente. Ela reencontra Yelena Belova, Alexei Shostakov e Melina Vostokoff, pessoas ligadas ao programa que as treinou e separou. Juntas, investigam quem ainda controla a Sala Vermelha e tentam libertar outras mulheres submetidas ao mesmo sistema.","mcu","https://cdn.mos.cms.futurecdn.net/E6vDcSaktmRswXJaGbXqR6.png"],
+      ["Shang-Chi e a Lenda dos Dez Aneis",2021,"https://br.web.img3.acsta.net/pictures/21/08/05/20/13/2818037.jpg","Sean leva uma vida discreta em São Francisco até ser atacado por homens ligados aos Dez Anéis, organização liderada por seu pai, Xu Wenwu. Ao reencontrar a irmã Xialing, ele é arrastado para uma história familiar marcada por luto e poder. A busca os conduz a Ta Lo, onde Wenwu pretende abrir um caminho que pode libertar uma ameaça antiga.","mcu","https://www.intofilm.org/intofilm-production/8521/scaledcropped/1170x658/resources/8521/shang-chi-and-the-leged-of-the-ten-rings-image-2-disney.jpg"],
+      ["Eternos",2021,"https://lumiere-a.akamaihd.net/v1/images/eternals_ka_mi_bra_9d31ede0.png?region=0%2C0%2C421%2C570","Os Eternos são seres poderosos enviados à Terra há milhares de anos para proteger a humanidade dos Deviantes. Depois de viverem separados por séculos, eles se reúnem quando as criaturas reaparecem e descobrem que uma mudança cósmica está prestes a acontecer. Divididos entre cumprir a missão original e salvar as pessoas com quem conviveram, precisam decidir o destino do planeta.","mcu","https://imgix.bustle.com/uploads/image/2021/11/4/27cde340-ce97-495d-bad5-9fbba0c599c3-bab6360_comp_v002_0574951135.jpg?crop=faces&fit=crop&fm=jpg&h=630&w=1200"],
+      ["Homem-Aranha: Sem Volta Para Casa",2021,"https://www.ucicinemas.com.br/Content/Upload/Filmes/Posters/9912/filme_9912.jpg","Depois que sua identidade é revelada, Peter Parker vê sua vida e a de seus amigos virarem alvo de atenção e perigo. Ao pedir ao Doutor Estranho que faça todos esquecerem quem ele é, uma interferência no feitiço abre passagem para visitantes de outras realidades. Peter tenta mandá-los de volta sem colocar em risco quem ama, enquanto enfrenta o peso de suas escolhas.","mcu","https://pbs.twimg.com/media/FN6mTQVWYAsk7VA.jpg"],
+      ["Doutor Estranho no Multiverso da Loucura",2022,"https://lumiere-a.akamaihd.net/v1/images/drstrange2_ka_brpo_nowstreaming_b09a0afb.png?region=0%2C0%2C964%2C1344","Doutor Estranho ajuda America Chavez, uma jovem capaz de atravessar universos, enquanto versões alternativas da realidade se cruzam. A busca por proteção leva Strange a visitar mundos desconhecidos e pedir auxílio a antigos aliados. Uma força poderosa também está atrás de America, e o conflito exige que ele confronte as consequências de suas decisões e os perigos de alterar o multiverso.","mcu","https://hips.hearstapps.com/hmg-prod/images/doctor-strange-multiverse-madness-benedict-cumberbatch-1650977164.jpg?crop=1xw%3A0.84375xh%3B0%2C0.00240xh"],
+      ["Thor: Amor e Trovao",2022,"https://m.media-amazon.com/images/M/MV5BMDc1OTI4NTctYmVmOS00NjUxLTlkYzItODA0Mzg2N2JlMmQ2XkEyXkFqcGc%40._V1_.jpg","Após viajar com os Guardiões, Thor tenta descobrir o que deseja fazer de sua vida. Ele reencontra Jane Foster, agora a Poderosa Thor, e descobre que Gorr está caçando deuses por toda a galáxia. Ao lado de Jane, Valquíria e Korg, parte para impedir o vilão enquanto os antigos parceiros enfrentam mudanças pessoais.","mcu","https://live-production.wcms.abc-cdn.net.au/d589ce168c2f61a0ec18fa3c95f4745f?cropH=1255&cropW=1883&height=575&impolicy=wcms_crop_resize&width=862&xPos=117&yPos=0"],
+      ["Pantera Negra: Wakanda Para Sempre",2022,"https://lumiere-a.akamaihd.net/v1/images/summer_break_pay1_brazil_fe11aaf3.jpeg?region=0%2C0%2C770%2C1100","Após a morte de T'Challa, Wakanda tenta proteger seu povo em meio à pressão de outras nações. A descoberta de vibranium no oceano coloca o país em rota de colisão com Talokan, civilização escondida liderada por Namor. Shuri, Ramonda e as guerreiras precisam decidir como defender Wakanda e quem assumirá a responsabilidade de proteger seu futuro.","mcu","https://gospelaccordingtosuperheroes.weebly.com/uploads/1/2/8/4/128476745/screenshot-tool-20240422124547-orig_orig.png"],
+      ["Guardioes da Galaxia Vol. 3",2023,"https://ucicinemas.com.br/Content/Upload/Filmes/Posters/10247/filme_10247.jpg","Os Guardiões tentam construir uma vida tranquila em Luganenhum, mas uma emergência envolvendo Rocket os obriga a partir em uma missão contra o tempo. Para salvá-lo, precisam enfrentar o passado do guaxinim e o cientista responsável por experiências que marcaram sua vida. A jornada testa a união do grupo e leva cada Guardião a pensar no que deseja fazer depois.","mcu","https://media.glamour.mx/photos/64592cf5423a319abe4f4115/master/pass/IMG_6077.jpeg"],
+      ["As Marvels",2023,"https://lumiere-a.akamaihd.net/v1/images/g_disney_themarvels_characterposter_1571_01_b521ac41.jpeg?region=1%2C0%2C1298%2C730","Carol Danvers, Monica Rambeau e Kamala Khan descobrem que seus poderes estão ligados e que, quando uma usa suas habilidades, as outras trocam de lugar com ela. A situação as obriga a cooperar enquanto investigam uma ameaça comandada por Dar-Benn. Entre missões espaciais e conflitos de personalidade, as três precisam agir como equipe para proteger suas famílias e impedir uma crise.","mcu","https://cdn.colombia.com/sdi/2023/09/21/the-marvels-confirman-el-presupuesto-que-le-costo-a-marvel-studios-realizar-la-secuela-de-capitana-marvel-1189211.jpg"],
+      ["Deadpool & Wolverine",2024,"https://m.media-amazon.com/images/M/MV5BNTI2NjY3ZTMtOTY3Ni00MjRiLWJjOGUtZTVmNDNmY2U5N2JiXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Wade Wilson tenta levar uma vida comum, mas uma crise ameaça sua realidade e o obriga a voltar à ação. Para encontrar uma saída, procura uma versão de Wolverine e o arrasta para uma jornada através de universos e linhas do tempo. A dupla precisa superar a desconfiança e suas diferenças enquanto enfrenta perigos que podem apagar o mundo de Wade.","mcu","https://ichef.bbci.co.uk/ace/standard/976/cpsprodpb/cc85/live/1fbe2bb0-4d94-11ef-949b-c13639565e66.jpg"],
+      ["Capitao America: Admiravel Mundo Novo",2025,"https://ecine.net.br/sistema/arquivos/filmes/130120251246571.jpg","Sam Wilson assume plenamente o escudo e o papel de Capitão América após se tornar aliado do presidente Thaddeus Ross. Um incidente internacional e a descoberta de uma conspiração levam Sam a investigar quem está manipulando a crise. Sem o soro que transformou Steve Rogers, ele precisa confiar em seu treinamento, em seus aliados e em sua própria maneira de liderar.","mcu","https://cdn.mos.cms.futurecdn.net/v2/t%3A0%2Cl%3A0%2Ccw%3A2721%2Cch%3A1531%2Cq%3A80%2Cw%3A2560/PyiPf5HRKCP2W3ocoF3oYd.jpg"],
+      ["Thunderbolts*",2025,"https://lumiere-a.akamaihd.net/v1/images/image_d316513e.jpeg?region=0%2C0%2C540%2C810","Um grupo de anti-heróis e agentes marcados pelo passado é enviado para uma missão que parece não ter volta. Yelena Belova, Bucky Barnes, Guardião Vermelho, John Walker e Ghost precisam lidar com a desconfiança enquanto descobrem por que foram reunidos. A tarefa os força a encarar suas escolhas e a decidir se conseguem agir juntos quando não há um herói tradicional para salvá-los.","mcu","https://d23.com/app/uploads/2025/05/01_OAB-04192_R2.jpg"],
+      ["Quarteto Fantastico: Primeiros Passos",2025,"https://ingresso-a.akamaihd.net/b2b/production/uploads/movie/poster/1183/88a3d0f2cb2b316bc902b0cc773a6f54.jpg","Em uma Terra retrofuturista inspirada nos anos 1960, Reed Richards, Sue Storm, Johnny Storm e Ben Grimm são uma família conhecida como a Primeira Família da Marvel. Quando Galactus e sua arauta, a Surfista Prateada, ameaçam o planeta, os quatro precisam combinar suas habilidades e enfrentar uma escolha que envolve o futuro da humanidade. A aventura põe à prova seus poderes e seus laços.","mcu","https://search.ch/cine/movie/images/fa/fantasticfour4_still_410_BMN-14200_R_ov_org.jpg"],
+      ["Homem-Aranha: Um Novo Dia",2026,"https://cdn.marvel.com/content/2x/smbnd_online_1400x2100_hoodie_02.jpg","Quatro anos depois de Peter Parker apagar a própria identidade das memórias das pessoas próximas, ele vive sozinho e dedica todo o tempo a proteger Nova York. Enquanto tenta aceitar que seus antigos amigos seguiram em frente sem se lembrar dele, a pressão provoca uma transformação física inesperada. Um padrão de crimes aponta para uma ameaça invisível, e Peter precisa detê-la sem perder a vida que ainda lhe resta como Peter Parker.","mcu","https://do8h0zazxovw4.cloudfront.net/2026/08/20260728T1715-MOVIE-REVIEW-SPIDER-MAN-BRAND-NEW-DAY-1824038_web-cropped.jpg"],
+      ["X-Men",2000,"https://www.impawards.com/2000/posters/xmen_ver1_xlg.jpg","Quando o senador Robert Kelly defende medidas contra os mutantes, Wolverine e a jovem Vampira encontram os X-Men, liderados por Charles Xavier. Enquanto Magneto prepara um plano que pode colocar humanos e mutantes em conflito, a equipe tenta proteger Vampira e impedir uma crise. Logan também busca descobrir o que aconteceu em seu passado.","xmen"],
+      ["X2: X-Men United",2003,"https://cdn11.bigcommerce.com/s-ydriczk/images/stencil/1280w/products/84557/93513/X-Men-2-X2-Version-B-original-movie-poster-buy-now-at-starstills__20537.1568909170.jpg?c=2","Um ataque contra o presidente aumenta o medo dos mutantes e dá ao coronel William Stryker a oportunidade de avançar seu plano contra os X-Men. Quando a escola de Xavier é invadida, os sobreviventes buscam a ajuda de Magneto e Mística, apesar dos objetivos diferentes. Wolverine também começa a descobrir a verdade sobre o programa que apagou parte de seu passado.","xmen","https://m.media-amazon.com/images/M/MV5BNmY2Njc1MjctZGFiZi00ZDcxLTlmOTgtZGZkNmZjMjhkYzQ2XkEyXkFqcGc%40._V1_.jpg"],
+      ["X-Men: O Confronto Final",2006,"https://image.tmdb.org/t/p/original/rioNJZxcyIecNCKQLGWY1sWxZLb.jpg","A descoberta de uma cura para o gene mutante divide a comunidade entre quem deseja abandonar seus poderes e quem vê a proposta como ameaça. Magneto reúne forças para impedir a distribuição do tratamento, enquanto os X-Men tentam evitar uma guerra. O retorno de Jean Grey, agora ligada à poderosa Fênix, torna o conflito imprevisível e obriga Xavier e seus aliados a enfrentar uma antiga amiga.","xmen","https://www.looper.com/img/gallery/the-entire-wolverine-movie-story-finally-explained/2006-the-ultimate-sacrifice-1564605474.jpg"],
+      ["X-Men Origens: Wolverine",2009,"https://www.impawards.com/2009/posters/x_men_origins_wolverine_ver6_xlg.jpg","Logan e seu irmão Victor atravessam décadas de guerras, mas a relação se deteriora à medida que suas naturezas os afastam. Recrutado pelo programa Arma X, Logan aceita um procedimento que liga adamantium ao seu esqueleto e lhe dá garras indestrutíveis. Ao descobrir que antigos companheiros estão sendo caçados, ele parte para descobrir quem está por trás disso e recuperar as lembranças que lhe foram tiradas.","xmen","https://media.kg-portal.ru/images/wolverine/wolverine_4.jpg"],
+      ["X-Men: Primeira Classe",2011,"https://www.querofilme.com.br/images/posters/b/240-x-men-primeira-classe-1.jpg","Na década de 1960, Charles Xavier e Erik Lehnsherr se conhecem enquanto investigam Sebastian Shaw, um mutante que pretende provocar uma guerra mundial. Charles reúne jovens com habilidades especiais para impedir o plano, enquanto Erik busca vingança contra o homem que o torturou. A crise dos mísseis de Cuba aproxima a equipe, mas também revela diferenças sobre a convivência entre humanos e mutantes.","xmen","https://m.media-amazon.com/images/M/MV5BMTY0MjgxNDY0NV5BMl5BanBnXkFtZTcwODQxNzYzNA%40%40._V1_.jpg"],
+      ["X-Men: Dias de um Futuro Esquecido",2014,"https://3.bp.blogspot.com/-fw98anRRVzQ/U3-jWfzuO_I/AAAAAAAAS_4/YeoAhem7At0/s1600/XMEN_P%C3%B4sterLan%C3%A7amento_64x94.jpg","Em um futuro no qual Sentinelas caçam mutantes e ameaçam os humanos, os X-Men sobreviventes tentam evitar a extinção. A esperança é enviar a consciência de Wolverine ao passado para impedir o evento que levou à criação dessas máquinas. Ao reencontrar versões jovens de Charles Xavier e Erik Lehnsherr, Logan precisa ajudá-los a superar diferenças e mudar a história.","xmen","https://cdn.ome.lt/legacy/images/galerias/X-Men-Days-of-Future-Past/X-Men-Dias-de-Um-Futuro-Esquecido-14fev2014-03.jpg"],
+      ["X-Men: Apocalipse",2016,"https://m.media-amazon.com/images/M/MV5BYWMyMTkxODAtM2JjZC00NzczLThmMjctYzA0YWU0NTBjZDEzXkEyXkFqcGc%40._V1_.jpg","Um mutante ancestral chamado Apocalipse desperta após milhares de anos e decide remodelar o mundo, recrutando aliados para ampliar seu poder. Raven e Charles Xavier reúnem uma nova geração de X-Men para proteger a humanidade. A luta também força Magneto a encarar o caminho escolhido e os jovens heróis a descobrir o alcance de suas habilidades.","xmen","https://images.bauerhosting.com/legacy/empire-images/reviews_films/5730c0d92d6ae3e52d8aa6a2/x-men-apocalypse.jpg?ar=16%3A9&crop=top&fit=crop"],
+      ["Os Novos Mutantes",2020,"https://lumiere-a.akamaihd.net/v1/images/jp20cs_the_new_mutants_poster_540_810_a7ba04b1.jpeg?region=0%2C0%2C540%2C810","Cinco adolescentes mutantes são mantidos em uma instituição isolada, onde a doutora Reyes afirma ajudá-los a controlar suas habilidades. Dani Moonstar, recém-chegada, começa a despertar forças que afetam os outros jovens e transformam seus medos em ameaças reais. Enquanto tentam entender o que acontece, precisam decidir se a clínica é um lugar de proteção ou uma prisão.","xmen","https://d32qys9a6wm9no.cloudfront.net/images/movies/backdrop/ab/6477acf60c68ef32f50f6acd3177bdf0_1280x720.jpg?t=1636156573"],
+      ["Deadpool",2016,"https://m.media-amazon.com/images/M/MV5BNDRlZTdlZmEtZDExNS00OWJlLTg5OWUtMDQ4ZTI5NDBlOTNiXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Wade Wilson trabalha como mercenário até receber um diagnóstico grave e aceitar um tratamento experimental. O procedimento lhe dá uma capacidade de regeneração extraordinária, mas deixa seu corpo marcado e o leva a adotar o nome Deadpool. Convencido de que Ajax pode ajudá-lo a recuperar a aparência, Wade parte atrás dele enquanto tenta proteger Vanessa, a mulher que ama.","xmen","https://m.media-amazon.com/images/M/MV5BMWQ2NWE3OTEtMTMxYy00YTIyLWIzMDMtMGRmOTM3OTcwMTc2XkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg"],
+      ["Logan",2017,"https://hustonsite.files.wordpress.com/2016/10/logan_onesheet.jpg","Em um futuro no qual os mutantes quase desapareceram, Logan vive escondido e cuida de um Charles Xavier idoso e doente. A chegada de Laura, uma menina com habilidades parecidas com as dele, transforma os dois em alvos de uma organização. Logan precisa protegê-la durante uma fuga perigosa e confrontar o que ainda resta de seu passado como Wolverine.","xmen","https://www.vice.com/wp-content/uploads/sites/2/2017/03/1488894341821-logan-4.jpeg"],
+      ["Deadpool 2",2018,"https://m.media-amazon.com/images/M/MV5BMGQ4NGZhN2MtNDI3MS00MGE2LWI2NjUtODA2YzRhNDFhMDdiXkEyXkFqcGc%40._V1_.jpg","Depois de uma perda pessoal, Wade Wilson tenta encontrar um novo propósito e acaba envolvido em uma missão sobre Russell, um jovem mutante perseguido. Cable, um soldado vindo do futuro, acredita que o garoto causará uma tragédia e tenta eliminá-lo. Deadpool reúne aliados para proteger Russell e provar que o rapaz ainda pode escolher quem deseja ser.","xmen","https://images.indianexpress.com/2018/05/deadpool-2-75914.jpg?resize=728"],
+      ["Homem-Aranha",2002,"https://cdn.posteritati.com/posters/000/000/077/725/spiderman-md-web.jpg","O estudante Peter Parker ganha habilidades extraordinárias após ser picado por uma aranha geneticamente alterada. Quando uma tragédia pessoal o faz perceber as consequências de não agir, ele decide proteger Nova York como Homem-Aranha. Ao mesmo tempo, enfrenta o Duende Verde, cuja identidade e ambição ameaçam as pessoas próximas a Peter.","spider","https://storage.googleapis.com/stateless-thedailyfandom-org/2020/06/57c535cd-sm1-pparkerfirsttimecrawling.jpg"],
+      ["Homem-Aranha 2",2004,"https://cdn11.bigcommerce.com/s-yzgoj/images/stencil/1280x1280/products/2904209/5948492/MOVCE5209__36461.1679593747.jpg?c=2","Peter Parker tenta equilibrar os estudos, o trabalho e sua vida afetiva com as responsabilidades de ser o Homem-Aranha. O peso dessa rotina faz seus poderes falharem, justamente quando Otto Octavius se transforma no perigoso Doutor Octopus após um experimento. Peter precisa decidir se continuará a vida de herói e deter Otto sem perder as pessoas que ama.","spider","https://cdni.fancaps.net/file/fancaps-movieimages/2587525.jpg"],
+      ["Homem-Aranha 3",2007,"https://image.tmdb.org/t/p/original/lzzOk1QYmOgvn1lScwXa1vLqBdr.jpg","Peter e Mary Jane tentam levar adiante seus planos, mas o sucesso do Homem-Aranha começa a afetar a vida pessoal dele. A chegada de um simbionte amplia sua força e alimenta seu orgulho e sua raiva, enquanto Sandman, Venom e o Novo Duende surgem como ameaças. Confrontado por segredos familiares, Peter precisa reconhecer o efeito de suas escolhas antes que a vingança destrua seus relacionamentos.","spider","https://cdni.fancaps.net/file/fancaps-movieimages/2591034.jpg"],
+      ["O Espetacular Homem-Aranha",2012,"https://media.senscritique.com/media/000006570950/source_big/The_Amazing_Spider_Man.jpg","Criado pelos tios após o desaparecimento de seus pais, Peter Parker encontra pistas que o levam à Oscorp e ao cientista Curt Connors. Uma experiência com aranhas altera seu corpo e lhe dá habilidades que ele usa para investigar o mistério de sua família. Quando Connors se transforma no Lagarto e ameaça Nova York, Peter precisa assumir a responsabilidade de proteger a cidade.","spider","https://d2d7ho1ae66ldi.cloudfront.net/ArquivoNoticias/47133091-6803-11ec-aa6e-9587410378a2/andrew-garfield-spider-man.jpg"],
+      ["O Espetacular Homem-Aranha 2",2014,"https://cdn.posteritati.com/posters/000/000/036/975/the-amazing-spiderman-2-md-web.jpg","Peter Parker tenta cumprir a promessa de manter distância de Gwen Stacy, mas os dois continuam ligados enquanto ele protege Nova York. A chegada de Electro e o retorno de um amigo de infância ampliam os perigos e trazem revelações sobre a Oscorp e os pais de Peter. Ele precisa decidir como conciliar seu amor por Gwen com o compromisso de ser herói.","spider","https://cdn.mos.cms.futurecdn.net/v2/t%3A0%2Cl%3A160%2Ccw%3A960%2Cch%3A720%2Cq%3A80%2Cw%3A960/8qaNWjCYb2eBsc9e63kmFn.jpeg"],
+      ["Homem-Aranha: Através do Aranhaverso",2023,"https://www.sonypictures.com.br/sites/brazil/files/2023-08/SN_HomemAranha_1400x2100%20%281%29.jpg","Miles Morales reencontra Gwen Stacy e atravessa diferentes dimensões, onde conhece a Sociedade Aranha, liderada por Miguel O'Hara. A equipe acredita que certos acontecimentos precisam ocorrer para preservar o multiverso, mas Miles discorda quando percebe que isso pode custar a vida de alguém próximo. Perseguido por outros heróis-aranha, ele tenta encontrar o próprio caminho e voltar para casa.","spider","https://assets.vogue.in/photos/6484e6ce93d81bc6030fcef8/4%3A3/w_1144%2Ch_858%2Cc_limit/Miles%20Morales.png"],
+      ["Quarteto Fantastico",2005,"https://br.web.img3.acsta.net/pictures/14/04/02/18/17/010475.jpg","Durante uma missão espacial financiada por Victor von Doom, Reed Richards, Sue Storm, Johnny Storm e Ben Grimm são expostos a uma tempestade cósmica. De volta à Terra, cada um desenvolve habilidades diferentes, e os quatro aprendem a lidar com as mudanças. Quando Victor também é afetado e passa a ameaçar a cidade, o grupo precisa unir seus poderes pela primeira vez.","quarteto","https://cdn.mos.cms.futurecdn.net/GLdpKKevk38DTUh6a4UqDm.jpg"],
+      ["Quarteto Fantastico e o Surfista Prateado",2007,"https://www.limitedruns.com/media/images/productimage-picture-fantastic-4-rise-of-the-silver-surfer-1-214189.jpg","O Quarteto Fantástico se prepara para uma nova etapa de suas vidas quando a chegada do Surfista Prateado provoca fenômenos que ameaçam destruir o planeta. Reed e Sue tentam equilibrar a missão com o casamento, enquanto Johnny descobre que seus poderes podem se misturar aos dos companheiros. Para deter Galactus, a equipe precisa descobrir quem é o Surfista e se pode convencê-lo a mudar de lado.","quarteto","https://m.media-amazon.com/images/M/MV5BMTc0NTkxNzAwNl5BMl5BanBnXkFtZTcwOTQ2MjAzMw%40%40._V1_.jpg"],
+      ["Quarteto Fantastico",2015,"https://conteudo.imguol.com.br/c/entretenimento/9c/2015/08/05/poster-do-filme-quarteto-fantastico-2015-1438811122985_600x883.jpg","Reed Richards e outros jovens cientistas desenvolvem uma máquina capaz de abrir passagem para outra dimensão. Uma expedição experimental termina em acidente e concede poderes a Reed, Sue, Johnny e Ben, mas também os separa e transforma suas vidas. Enquanto tentam compreender as consequências, precisam enfrentar Victor von Doom, que retorna com planos para alterar a Terra.","quarteto","https://images5.alphacoders.com/644/644243.jpg"],
+
+      ["Homem-Aranha: De Volta ao Lar",2017,"https://www.impawards.com/2017/posters/spiderman_homecoming_ver4_xlg.jpg","Depois de ajudar os Vingadores, Peter Parker tenta voltar à rotina da escola enquanto espera uma nova missão de Tony Stark. Ao investigar o comércio ilegal de tecnologia alienígena, ele enfrenta o Abutre e precisa provar que consegue proteger Nova York por conta própria.","spider","https://www.impawards.com/2017/posters/spiderman_homecoming_ver4_xlg.jpg"],
+      ["Homem-Formiga e a Vespa",2018,"https://www.impawards.com/2018/posters/antman_and_the_wasp_ver4_xlg.jpg","Scott Lang tenta equilibrar a vida familiar com as consequências de suas escolhas como herói. Hank Pym e Hope van Dyne o recrutam para uma missão no Reino Quântico, onde procuram resgatar Janet van Dyne e enfrentam uma adversária capaz de atravessar a matéria.","mcu","https://www.impawards.com/2018/posters/antman_and_the_wasp_ver4_xlg.jpg"],
+      ["Wolverine: Imortal",2013,"https://www.impawards.com/2013/posters/wolverine_ver5_xlg.jpg","Após os acontecimentos de X-Men: O Confronto Final, Logan é levado ao Japão e reencontra um homem que salvou durante a guerra. Envolvido em uma disputa familiar e perseguido por inimigos, ele precisa enfrentar samurais e descobrir o preço de abrir mão de seu fator de cura.","xmen","https://www.impawards.com/2013/posters/wolverine_ver5_xlg.jpg"],
+      ["X-Men: Fênix Negra",2019,"https://www.impawards.com/2019/posters/dark_phoenix_ver13_xlg.jpg","Durante uma missão espacial, Jean Grey é atingida por uma força cósmica que amplia seus poderes e ameaça seu equilíbrio. Enquanto os X-Men tentam ajudá-la, forças alienígenas procuram usar essa energia, colocando a equipe diante de uma decisão difícil sobre como proteger Jean e o planeta.","xmen","https://www.impawards.com/2019/posters/dark_phoenix_ver13_xlg.jpg"],
+      ["Homem-Aranha no Aranhaverso",2018,"https://image.tmdb.org/t/p/original/qQ87fVgIsyCpEKdBI6RFWbBZxTJ.jpg","Miles Morales descobre que pode atravessar dimensões e encontra diferentes versões do Homem-Aranha. Com a ajuda de Peter B. Parker, Gwen Stacy e outros heróis, ele tenta deter uma máquina que ameaça misturar realidades e encontrar a confiança para assumir seu próprio papel como herói.","spider","https://image.tmdb.org/t/p/original/qQ87fVgIsyCpEKdBI6RFWbBZxTJ.jpg"],    ];
+    const grade = document.querySelector("#catalogo");
+    const gradeDestaques = document.querySelector("#gradeDestaques");
+    catalogoMarvel.forEach(([titulo, ano, imagem, sinopse, franquia, imagemDetalhe]) => {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.dataset.tipo = "filme";
+      card.dataset.generos = `marvel acao ${franquia}`;
+      card.dataset.sinopse = sinopse;
+      if (imagemDetalhe) card.dataset.backdrop = imagemDetalhe;
+      card.innerHTML = `<div class="poster"><img class="poster-image" src="${imagem}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Ação · Marvel</span></div></div>`;
+      grade.append(card);
+    });
+    const catalogoVelozes = [
+      ["Velozes e Furiosos",2001,"https://artofthemovies.co.uk/cdn/shop/files/the-fast-and-the-furious_37d9e7cd-187688.jpg?v=1724951363","O policial Brian O’Conner se infiltra no grupo de Dominic Toretto para investigar uma série de roubos de carros. À medida que ganha a confiança da equipe, Brian passa a questionar onde termina seu dever e começa sua lealdade.","https://artofthemovies.co.uk/cdn/shop/files/the-fast-and-the-furious_37d9e7cd-187688.jpg?v=1724951363"],
+      ["+ Velozes + Furiosos",2003,"https://movieposterhub.com/cdn/shop/files/2FAST2FURIOUS.jpg?v=1706766637&width=3287","Depois de deixar a polícia, Brian O’Conner recebe a chance de limpar seu nome participando de uma operação em Miami. Ao lado do amigo Roman Pearce, ele precisa se infiltrar na organização de um traficante e provar que ainda pode confiar em seus instintos.","https://movieposterhub.com/cdn/shop/files/2FAST2FURIOUS.jpg?v=1706766637&width=3287"],
+      ["Velozes e Furiosos: Desafio em Tóquio",2006,"https://www.originalfilmart.co.uk/cdn/shop/products/Fast_and_the_Furious_Tokyo_Drift_2006_original_film_art_1600x.jpg?v=1562543128","Enviado para Tóquio para evitar a prisão, o jovem piloto Sean Boswell conhece o universo das corridas de drift. Com a ajuda de Han, ele aprende uma nova técnica e acaba desafiando o campeão local, colocando em jogo sua reputação e sua segurança.","https://www.originalfilmart.co.uk/cdn/shop/products/Fast_and_the_Furious_Tokyo_Drift_2006_original_film_art_1600x.jpg?v=1562543128"],
+      ["Velozes e Furiosos 4",2009,"https://www.impawards.com/2009/posters/fast_and_furious_xlg.jpg","Dominic Toretto e Brian O’Conner voltam a cruzar caminhos quando uma perda pessoal e uma investigação os levam até o mesmo criminoso. Embora estejam em lados diferentes da lei, os dois precisam unir forças para enfrentar uma rede de tráfico e acertar contas com o passado.","https://www.impawards.com/2009/posters/fast_and_furious_xlg.jpg"],
+      ["Velozes e Furiosos 5: Operação Rio",2011,"https://image.tmdb.org/t/p/original/h7AtGhFh8YAO0xkyuG3tWaP8LKn.jpg","Em fuga no Rio de Janeiro, Dom e Brian reúnem antigos aliados para planejar um grande roubo. Perseguidos pelo agente Luke Hobbs e enfrentando um poderoso empresário local, eles apostam tudo em uma missão que pode garantir sua liberdade.","https://image.tmdb.org/t/p/original/h7AtGhFh8YAO0xkyuG3tWaP8LKn.jpg"],
+      ["Velozes e Furiosos 6",2013,"https://image.tmdb.org/t/p/original/dASp9JVNV5qw14XdHbidhy99wVK.jpg","Hobbs pede ajuda a Dom e sua equipe para deter uma organização de motoristas habilidosos. A missão fica pessoal quando descobrem que Letty, dada como morta, está ligada ao grupo. Em troca de perdão, a equipe encara uma perseguição internacional e tenta trazê-la de volta.","https://image.tmdb.org/t/p/original/9iDP1hZibCX12hQgWAUhEdN4sCj.jpg"],
+      ["Velozes e Furiosos 7",2015,"https://image.tmdb.org/t/p/original/nHK7bZmrTrKGOX6RgpNuxnkvClQ.jpg","A equipe tenta retomar uma vida tranquila, mas Deckard Shaw busca vingança contra eles. Quando uma missão de resgate os coloca na mira do assassino, Dom e seus amigos atravessam vários países para proteger uns aos outros e impedir uma ameaça tecnológica.","https://image.tmdb.org/t/p/original/nHK7bZmrTrKGOX6RgpNuxnkvClQ.jpg"],
+      ["Velozes e Furiosos 8",2017,"https://www.querofilme.com.br/images/b/232-velozes-e-furiosos-8.jpg","Durante uma viagem, Dom é atraído para uma operação criminosa pela hacker Cipher e parece se voltar contra a própria equipe. Letty, Roman, Tej e Ramsey precisam descobrir o que aconteceu, trabalhando até com antigos adversários para impedir um ataque de escala global.","https://www.querofilme.com.br/images/b/232-velozes-e-furiosos-8.jpg"],
+      ["Velozes e Furiosos: Hobbs & Shaw",2019,"https://m.media-amazon.com/images/M/MV5BNmU4OTA5NGYtMTFjMS00MzgxLWFjNTMtYjdlMThlYzc4M2M4XkEyXkFqcGc%40._V1_.jpg","O agente Luke Hobbs e o ex-agente Deckard Shaw são obrigados a trabalhar juntos para deter Brixton, um adversário aprimorado por tecnologia. A missão os leva a uma corrida contra o tempo e a uma improvável aliança entre suas famílias.","https://m.media-amazon.com/images/M/MV5BNmU4OTA5NGYtMTFjMS00MzgxLWFjNTMtYjdlMThlYzc4M2M4XkEyXkFqcGc%40._V1_.jpg"],
+      ["Velozes e Furiosos 9",2021,"https://amc-theatres-res.cloudinary.com/image/upload/f_auto/q_auto%3Alow/amc-cdn/production/2/movies/50300/50281/PosterDynamic/123362.jpg","Dom leva uma vida afastada das corridas, mas uma nova ameaça reúne a equipe novamente. O conflito ganha contornos pessoais quando surge Jakob, seu irmão, ligado a um plano que pode colocar o mundo em perigo.","https://amc-theatres-res.cloudinary.com/image/upload/f_auto/q_auto%3Alow/amc-cdn/production/2/movies/50300/50281/PosterDynamic/123362.jpg"],
+      ["Velozes e Furiosos 10",2023,"https://m.media-amazon.com/images/M/MV5BYzEwZjczOTktYzU1OS00YjJlLTgyY2UtNWEzODBlN2RjZDEwXkEyXkFqcGc%40._V1_.jpg","Dante Reyes retorna para se vingar de Dom e de sua equipe, transformando aliados em alvos e espalhando armadilhas pelo mundo. Para proteger sua família, Dom enfrenta uma perseguição que testa os limites de sua lealdade.","https://m.media-amazon.com/images/M/MV5BYzEwZjczOTktYzU1OS00YjJlLTgyY2UtNWEzODBlN2RjZDEwXkEyXkFqcGc%40._V1_.jpg"]
+    ];
+    catalogoVelozes.forEach(([titulo, ano, imagem, sinopse, imagemDetalhe]) => {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.dataset.tipo = "filme";
+      card.dataset.generos = "acao velozesefuriosos";
+      card.dataset.sinopse = sinopse;
+      card.dataset.backdrop = imagemDetalhe;
+      card.innerHTML = `<div class="poster"><img class="poster-image" src="${imagem}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Ação · Aventura</span></div></div>`;
+      grade.append(card);
+    });
+    const catalogoComediaTerror = [
+      ["Inatividade Paranormal",2013,"https://br.web.img3.acsta.net/medias/nmedia/18/94/14/75/20420264.jpg","Malcolm e Kisha se mudam para uma casa e começam a registrar acontecimentos estranhos. Quando percebem que um fantasma está atrapalhando sua rotina, procuram ajuda para expulsá-lo, em uma paródia de filmes de atividade paranormal.","inatividadeparanormal"],
+      ["Inatividade Paranormal 2",2014,"https://m.media-amazon.com/images/M/MV5BNDY1Y2YxNTMtZjA4OC00NGRiLTgxNjUtZTAwODk0ZjdmNWQ0XkEyXkFqcGc%40._V1_.jpg","Após escapar de uma casa assombrada, Malcolm tenta recomeçar a vida em outro lugar. Só que fenômenos sobrenaturais e uma boneca assustadora voltam a transformar o cotidiano dele em uma sucessão de situações absurdas.","inatividadeparanormal"],
+      ["Todo Mundo em Pânico",2000,"https://www.originalfilmart.com/cdn/shop/files/scarymovie_2000_original_film_art_5000x.webp?v=1683910671","Depois de um acidente encoberto, um grupo de estudantes passa a ser perseguido por um assassino mascarado. Cindy e os amigos tentam descobrir quem está por trás dos ataques enquanto enfrentam paródias de filmes de terror populares.","todoomundoempanico"],
+      ["Todo Mundo em Pânico 2",2001,"https://cdn11.bigcommerce.com/s-yzgoj/images/stencil/500x659/products/2876189/5915414/MOVGG1817__20003.1679567824.jpg?c=2","Cindy e outros estudantes são convidados a passar a noite em uma mansão usada em um experimento paranormal. O plano logo sai do controle, dando lugar a fantasmas, sustos e confusões que satirizam histórias de casas mal-assombradas.","todoomundoempanico"],
+      ["Todo Mundo em Pânico 3",2003,"https://moviesmoviesmovies.co.uk/cdn/shop/files/IMG_0005_BM15970_1.jpg?v=1736248739","A repórter Cindy Campbell investiga uma fita de vídeo ligada a mortes misteriosas e um círculo estranho em uma plantação. No caminho, encontra personagens e situações que parodiam filmes de terror e ficção científica.","todoomundoempanico"],
+      ["Todo Mundo em Pânico 4",2006,"https://www.impawards.com/2006/posters/scary_movie_four_ver4_xlg.jpg","Cindy tenta entender os acontecimentos sobrenaturais em uma casa e acaba no centro de uma ameaça que se espalha pelo planeta. A investigação vira uma sequência de paródias de histórias de fantasmas, invasões e monstros.","todoomundoempanico"],
+      ["Todo Mundo em Pânico 5",2013,"https://www.impawards.com/2013/posters/scary_movie_five_ver2_xlg.jpg","Um casal começa uma nova vida com as crianças, mas comportamentos estranhos e presenças sobrenaturais aparecem pela casa. Com a ajuda de especialistas, eles tentam entender o que está acontecendo em meio a sátiras de filmes de terror e suspense.","todoomundoempanico"],
+      ["Todo Mundo em Pânico 6",2026,"https://images.squarespace-cdn.com/content/v1/61d3a1dc960d41134f8ac264/163ea186-7012-420a-b302-8f69ff6036ef/scary-movie-2026-poster.jpg?format=2500w","Cindy, Brenda e os amigos voltam a fugir de um assassino mascarado. A turma tenta sobreviver a uma nova onda de perseguições e situações absurdas que brincam com os clichês do terror atual.","todoomundoempanico"]
+    ];
+    catalogoComediaTerror.forEach(([titulo, ano, imagem, sinopse, franquia]) => {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.dataset.tipo = "filme";
+      card.dataset.generos = `comedia terror ${franquia}`;
+      card.dataset.sinopse = sinopse;
+      card.dataset.backdrop = imagem;
+      card.innerHTML = `<div class="poster"><img class="poster-image" src="${imagem}" alt="Pôster de ${titulo}" loading="lazy"><span class="poster-label">Filme</span></div><div class="movie-info"><h3 class="movie-title">${titulo}</h3><div class="movie-meta"><span>${ano} · Comédia · Terror</span></div></div>`;
+      grade.append(card);
+    });
+    const capasAlternativas = {
+      "Velozes e Furiosos 6": "https://image.tmdb.org/t/p/original/32pG4m4PoYRkTH4lDozvM6GlCDV.jpg",
+
+      "Inatividade Paranormal": "https://images.moviebuff.com/4f1f1f95-fd6c-4245-a47b-6bfa94a7ce97?w=1000",
+      "Inatividade Paranormal 2": "https://filmspot.com.pt/images/filmes/posters/big/184345_pt.jpg",
+      "Todo Mundo em Pânico": "https://b1.filmpro.ru/c/5730.jpg",
+      "Todo Mundo em Pânico 2": "https://www.cineadaffiches.com/cdn/shop/products/57_e30e3606-c2db-40b5-bb30-72949e7303fa_1200x1200.jpg?v=1604526063",
+      "Todo Mundo em Pânico 3": "https://es.web.img2.acsta.net/medias/nmedia/18/68/01/07/20068067.jpg",
+      "Todo Mundo em Pânico 4": "https://m.blog.hu/me/mediageci/image/200702/Scary_Movie_4.jpg",
+      "Todo Mundo em Pânico 5": "https://i.ebayimg.com/00/s/MTYwMFgxMDg1/z/GWwAAOSwfbFnFm89/$%5F57.JPG?set_id=880000500F",
+      "Todo Mundo em Pânico 6": "https://pbs.twimg.com/media/HHkQxaqWIAIus68?format=jpg&name=large"
+    };
+    grade.addEventListener("error", (evento) => {
+      const imagem = evento.target;
+      if (!imagem.matches(".poster-image") || imagem.dataset.tentouAlternativa === "sim") return;
+      const titulo = imagem.closest(".card")?.querySelector(".movie-title")?.textContent.trim();
+      const alternativa = capasAlternativas[titulo];
+      if (alternativa) {
+        imagem.dataset.tentouAlternativa = "sim";
+        imagem.src = alternativa;
+      }
+    }, true);    const chavesDestaque = ["scarface", "inatividadeparanormal", "velozesfuriosos", "quartetofantasticoprimeirospassos", "xmen", "homemaranha", "umespioemeio", "ramboprogramadoparamatar", "paniconafloresta4origenssangrentas", "deadpool", "thor", "panteranegra"];
+    const cartoesDoCatalogo = Array.from(grade.querySelectorAll(".card"));
+    const cardsDestaque = chavesDestaque.map((chave) => cartoesDoCatalogo.find((card) => normalizarTexto(card.querySelector(".movie-title").textContent) === chave)).filter(Boolean);
+    gradeDestaques.append(...cardsDestaque.map((card) => card.cloneNode(true)));
+
+    const ordemOriginal = Array.from(grade.querySelectorAll(".card"));
+    const sequencias = new Map();
+    const filmesAvulsos = [];
+    ordemOriginal.forEach((card) => {
+      const titulo = normalizarTexto(card.querySelector(".movie-title").textContent);
+      const generos = card.dataset.generos.split(" ");
+      let franquia = "";
+      if (titulo.startsWith("rambo")) franquia = "rambo";
+      else if (titulo.startsWith("paniconafloresta")) franquia = "panico-na-floresta";
+      else if (generos.includes("velozesefuriosos")) franquia = "velozesefuriosos";
+      else franquia = ["inatividadeparanormal", "todoomundoempanico", "mcu", "spider", "xmen", "quarteto"].find((item) => generos.includes(item)) || "";
+      if (!franquia) { filmesAvulsos.push(card); return; }
+      if (!sequencias.has(franquia)) sequencias.set(franquia, []);
+      sequencias.get(franquia).push(card);
+    });
+
+    const ordemDispersa = [];
+    const filasFranquias = Array.from(sequencias.values());
+    let indiceAvulso = 0;
+    while (filasFranquias.some((fila) => fila.length) || indiceAvulso < filmesAvulsos.length) {
+      filasFranquias.forEach((fila) => { if (fila.length) ordemDispersa.push(fila.shift()); });
+      if (indiceAvulso < filmesAvulsos.length) ordemDispersa.push(filmesAvulsos[indiceAvulso++]);
+    }
+    const ordemPadrao = ordemDispersa;
+    grade.append(...ordemPadrao);
+    let ordemDeBuscaAtiva = false;
+
+    const filtros = document.querySelectorAll(".filter");
+    const cards = document.querySelectorAll(".card");
+    const elencoAtores = document.querySelector("#elencoAtores");
+    const cacheElenco = new Map();
+    const busca = document.querySelector("#busca");
+    const mensagemVazia = document.querySelector("#mensagemVazia");
+
+    const comentariosTemporarios = new Map();
+    const formularioComentarios = document.querySelector("#formComentarios");
+    const campoNomeComentario = document.querySelector("#nomeComentario");
+    const campoTextoComentario = document.querySelector("#textoComentario");
+    const listaComentarios = document.querySelector("#listaComentarios");
+    const feedbackComentarios = document.querySelector("#feedbackComentarios");
+    let tituloComentariosAtivo = "";
+
+    function chaveComentarios(titulo) {
+      return `dryfilmes:comentarios:v1:${normalizarTexto(titulo)}`;
+    }
+
+    function lerComentarios(chave) {
+      try {
+        const salvos = JSON.parse(localStorage.getItem(chave) || "[]");
+        return Array.isArray(salvos) ? salvos : [];
+      } catch (erro) {
+        return comentariosTemporarios.get(chave) || [];
+      }
+    }
+
+    function salvarComentarios(chave, comentarios) {
+      comentariosTemporarios.set(chave, comentarios);
+      try { localStorage.setItem(chave, JSON.stringify(comentarios)); }
+      catch (erro) { /* Mantem os comentarios disponiveis ate fechar esta pagina. */ }
+    }
+
+    function renderizarComentarios(titulo) {
+      tituloComentariosAtivo = titulo;
+      listaComentarios.replaceChildren();
+      const comentarios = lerComentarios(chaveComentarios(titulo));
+      if (!comentarios.length) {
+        const vazio = document.createElement("p");
+        vazio.className = "comments-empty";
+        vazio.textContent = "Ainda nao ha comentarios. Seja o primeiro a comentar.";
+        listaComentarios.append(vazio);
+        return;
+      }
+      comentarios.slice().reverse().forEach((comentario) => {
+        const item = document.createElement("article");
+        item.className = "comment-item";
+        const cabecalho = document.createElement("header");
+        const autor = document.createElement("strong");
+        autor.textContent = comentario.nome || "Visitante";
+        const data = document.createElement("time");
+        if (comentario.data) {
+          const instante = new Date(comentario.data);
+          if (!Number.isNaN(instante.getTime())) {
+            data.dateTime = instante.toISOString();
+            data.textContent = instante.toLocaleString("pt-BR");
+          }
+        }
+        cabecalho.append(autor, data);
+        const texto = document.createElement("p");
+        texto.textContent = comentario.texto || "";
+        item.append(cabecalho, texto);
+        listaComentarios.append(item);
+      });
+    }
+
+    formularioComentarios.addEventListener("submit", (evento) => {
+      evento.preventDefault();
+      const texto = campoTextoComentario.value.trim();
+      if (!texto || !tituloComentariosAtivo) return;
+      const chave = chaveComentarios(tituloComentariosAtivo);
+      const comentarios = lerComentarios(chave);
+      comentarios.push({
+        nome: campoNomeComentario.value.trim() || "Visitante",
+        texto,
+        data: new Date().toISOString()
+      });
+      salvarComentarios(chave, comentarios);
+      campoTextoComentario.value = "";
+      feedbackComentarios.textContent = "Comentario publicado neste navegador.";
+      renderizarComentarios(tituloComentariosAtivo);
+    });
+    const formularioSugestoes = document.querySelector("#formSugestoes");
+    const campoTituloSugestao = document.querySelector("#tituloSugestao");
+    const campoNomeSugestao = document.querySelector("#nomeSugestao");
+    const campoComentarioSugestao = document.querySelector("#comentarioSugestao");
+    const listaSugestoes = document.querySelector("#listaSugestoes");
+    const feedbackSugestoes = document.querySelector("#feedbackSugestoes");
+    const chaveSugestoes = "dryfilmes:sugestoes:v1";
+    let sugestoesTemporarias = [];
+
+    function lerSugestoes() {
+      try {
+        const itens = JSON.parse(localStorage.getItem(chaveSugestoes) || "[]");
+        return Array.isArray(itens) ? itens : [];
+      } catch (erro) { return sugestoesTemporarias; }
+    }
+
+    function guardarSugestoes(itens) {
+      sugestoesTemporarias = itens;
+      try { localStorage.setItem(chaveSugestoes, JSON.stringify(itens)); }
+      catch (erro) { /* Mantem em memoria ate fechar a pagina. */ }
+    }
+
+    function mostrarSugestoes() {
+      listaSugestoes.replaceChildren();
+      const itens = lerSugestoes();
+      if (!itens.length) {
+        const vazio = document.createElement("p");
+        vazio.className = "suggestion-empty";
+        vazio.textContent = "Ainda nao ha sugestoes. Deixe a primeira ideia!";
+        listaSugestoes.append(vazio);
+        return;
+      }
+      itens.slice().reverse().forEach((sugestao) => {
+        const cartao = document.createElement("article");
+        cartao.className = "suggestion-item";
+        const cabecalho = document.createElement("header");
+        const titulo = document.createElement("strong");
+        titulo.textContent = sugestao.titulo || "Filme sugerido";
+        const data = document.createElement("time");
+        if (sugestao.data) {
+          const instante = new Date(sugestao.data);
+          if (!Number.isNaN(instante.getTime())) {
+            data.dateTime = instante.toISOString();
+            data.textContent = instante.toLocaleDateString("pt-BR");
+          }
+        }
+        cabecalho.append(titulo, data);
+        const autoria = document.createElement("p");
+        autoria.textContent = `Por ${sugestao.nome || "Visitante"}`;
+        cartao.append(cabecalho, autoria);
+        if (sugestao.comentario) {
+          const comentario = document.createElement("p");
+          comentario.textContent = sugestao.comentario;
+          cartao.append(comentario);
+        }
+        listaSugestoes.append(cartao);
+      });
+    }
+
+    formularioSugestoes.addEventListener("submit", (evento) => {
+      evento.preventDefault();
+      const titulo = campoTituloSugestao.value.trim();
+      if (!titulo) return;
+      const itens = lerSugestoes();
+      itens.push({
+        titulo,
+        nome: campoNomeSugestao.value.trim() || "Visitante",
+        comentario: campoComentarioSugestao.value.trim(),
+        data: new Date().toISOString()
+      });
+      guardarSugestoes(itens);
+      formularioSugestoes.reset();
+      feedbackSugestoes.textContent = "Sugestao adicionada neste navegador.";
+      mostrarSugestoes();
+    });
+    mostrarSugestoes();
+    let filtroAtual = "todos";
+
+    function atualizarCatalogo() {
+      const termo = busca.value.trim().toLowerCase();
+      const buscarEmOrdemOriginal = termo.length > 0;
+      if (buscarEmOrdemOriginal !== ordemDeBuscaAtiva) {
+        grade.append(...(buscarEmOrdemOriginal ? ordemOriginal : ordemPadrao));
+        ordemDeBuscaAtiva = buscarEmOrdemOriginal;
+      }
+      let quantidadeVisivel = 0;
+      let destaquesVisiveis = 0;
+
+      cards.forEach((card) => {
+        const titulo = card.querySelector(".movie-title").textContent.toLowerCase();
+        const tipo = card.dataset.tipo;
+        const generos = card.dataset.generos.split(" ");
+
+        const combinaBusca = titulo.includes(termo);
+        const combinaFiltro =
+          filtroAtual === "todos" ||
+          tipo === filtroAtual ||
+          generos.includes(filtroAtual);
+
+        const mostrar = combinaBusca && combinaFiltro;
+        card.style.display = mostrar ? "" : "none";
+
+        if (mostrar) {
+          quantidadeVisivel++;
+          if (gradeDestaques.contains(card)) destaquesVisiveis++;
+        }
+      });
+
+      document.querySelector("#secaoDestaques").style.display = destaquesVisiveis ? "" : "none";
+      mensagemVazia.style.display = quantidadeVisivel ? "none" : "block";
+    }
+
+    filtros.forEach((botao) => {
+      botao.addEventListener("click", () => {
+        filtros.forEach((item) => item.classList.remove("active"));
+        botao.classList.add("active");
+        filtroAtual = botao.dataset.filter;
+        atualizarCatalogo();
+      });
+    });
+
+    busca.addEventListener("input", atualizarCatalogo);
+
+
+    const sinopses = {
+      "rambo: programado para matar": "Após um incidente com o xerife de uma pequena cidade, John Rambo é perseguido apesar de ser um veterano apenas tentando seguir viagem. A perseguição o leva às montanhas, onde seu treinamento militar o ajuda a escapar e resistir às tentativas de captura. Enquanto as autoridades ampliam a busca, o antigo comandante de Rambo tenta evitar que o confronto termine em tragédia.",
+      "rambo ii: a missao": "Libertado para uma missão especial, Rambo retorna ao Vietnã para fotografar um campo onde soldados americanos ainda poderiam estar presos. Ele recebe ordens para observar sem interferir, mas o encontro com os prisioneiros muda o objetivo da operação. Abandonado por seus superiores, precisa atravessar território inimigo e encontrar uma maneira de resgatá-los.",
+      "rambo iii": "Rambo tenta deixar a guerra para trás e vive em um mosteiro na Tailândia. Quando o coronel Trautman é capturado durante uma missão no Afeganistão, Rambo atravessa a região para resgatá-lo. Sem apoio oficial, ele se une a combatentes locais e enfrenta as forças que mantêm seu antigo comandante preso.",
+      "rambo iv": "Rambo vive às margens de um rio na Tailândia quando um grupo de voluntários o convence a levá-los até uma comunidade ameaçada na Birmânia. A região está sob ataque, e a missão humanitária termina em violência e desaparecimentos. Ao descobrir que os voluntários foram capturados, Rambo acompanha uma equipe de resgate por um território devastado.",
+      "rambo: ate o fim": "Aposentado em seu rancho no Arizona, Rambo tenta viver em paz e manter um vínculo próximo com Gabriela, que considera parte da família. Quando ela desaparece durante uma viagem ao México, ele cruza a fronteira para procurá-la e encontra uma rede criminosa. A busca o obriga a confrontar o próprio passado e a preparar uma última luta para proteger quem ama.",
+      "scarface": "Tony Montana chega a Miami como refugiado cubano e, junto com Manny, encontra oportunidades no submundo do crime. Sua disposição para assumir riscos o leva a subir no tráfico de drogas e construir um império, mas a ambição também o coloca em conflito com antigos aliados e rivais. Conforme acumula riqueza e poder, a paranoia e a violência ameaçam seus negócios, sua família e o controle que acredita ter conquistado.",
+      "panico na floresta": "Uma estrada bloqueada leva Chris a desviar por caminhos isolados na Virgínia Ocidental, onde colide com o carro de um grupo de jovens. Sem comunicação e longe de ajuda, eles procuram uma cabana e descobrem que a região é habitada por uma família violenta que os caça. Os sobreviventes precisam encontrar uma saída pela mata, sem saber em quem podem confiar.",
+      "panico na floresta 2: floresta do mal": "Um reality show de sobrevivência reúne participantes em uma área remota da Virgínia Ocidental, com câmeras registrando os desafios. O grupo não sabe que a floresta pertence a uma família de canibais que começa a persegui-los. Quando produtores e participantes se separam, os sobreviventes precisam abandonar as regras do programa e achar um caminho para escapar.",
+      "panico na floresta 3": "Um ônibus que transporta prisioneiros sofre um acidente em uma estrada cercada pela floresta. Guardas, detentos e uma jovem que acampava na região ficam sem transporte e tentam alcançar um lugar seguro, mas são perseguidos pelos canibais da mata. A fuga se complica porque os sobreviventes também desconfiam uns dos outros e precisam cooperar para continuar vivos.",
+      "panico na floresta 4: origens sangrentas": "Durante uma viagem de inverno, um grupo de universitários se perde em uma tempestade e busca abrigo em um sanatório abandonado. O prédio foi cenário de uma revolta violenta décadas antes e ainda esconde três irmãos perigosos. Presos pelo clima e sem comunicação, os jovens tentam escapar enquanto os perseguidores usam cada corredor para encurralá-los.",
+      "panico na floresta 5": "Uma festa de Halloween em uma pequena cidade da Virgínia Ocidental termina em um acidente e leva estudantes à prisão. Enquanto aguardam julgamento, eles descobrem que a cidade esconde ligações com os canibais da floresta. A violência se espalha pelas ruas, e os jovens precisam sobreviver tanto à perseguição quanto às decisões de um xerife que tem seus próprios motivos.",
+      "panico na floresta 6": "Danny herda um resort isolado chamado Hobb Springs e viaja com amigos para conhecer sua família distante. O local parece oferecer conforto, mas os parentes têm costumes estranhos e uma ligação perturbadora com a propriedade. Quando os visitantes descobrem que a herança faz parte de um segredo familiar, a viagem se transforma em uma luta para escapar.",
+      "panico na floresta: a fundacao (2021)": "Jen e seus amigos fazem uma trilha pelos Apalaches, mas deixam a rota marcada e acabam em território de uma comunidade isolada conhecida como a Fundação. O grupo é tratado como intruso por pessoas que seguem regras próprias e protegem o modo de vida que construíram nas montanhas. Separados, os amigos precisam entender a história do lugar e encontrar uma saída.",
+      "o mentalista": "Patrick Jane, consultor do Bureau de Investigacao da California, usa sua capacidade de observar pessoas e perceber detalhes para ajudar a solucionar crimes. Ao mesmo tempo, procura o assassino de sua esposa e filha.",
+      "supernatural (sobrenatural)": "Os irmaos Sam e Dean Winchester percorrem os Estados Unidos investigando fenomenos sobrenaturais. Seguindo o legado do pai, enfrentam criaturas, lendas e forcas que ameacam o mundo, enquanto lidam com os proprios lacos familiares."
+    };
+
+    const dialogo = document.querySelector("#detalhesTitulo");
+    const fecharDetalhes = dialogo.querySelector(".details-close");
+    const posters = document.querySelectorAll(".card .poster");
+
+    function normalizarTexto(valor) {
+      return valor.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/gi, "").toLowerCase();
+    }
+
+    function consultarJsonp(url, prefixo = "dryFilmesApi") {
+      return new Promise((resolve, reject) => {
+        const callback = `${prefixo}_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+        const script = document.createElement("script");
+        let timer;
+        const limpar = () => { clearTimeout(timer); script.remove(); delete window[callback]; };
+        window[callback] = (dados) => { limpar(); resolve(dados); };
+        script.onerror = () => { limpar(); reject(new Error("O servi?o externo n?o respondeu")); };
+        timer = setTimeout(() => { limpar(); reject(new Error("Tempo de consulta esgotado")); }, 15000);
+        script.src = `${url}&callback=${callback}`;
+        document.head.append(script);
+      });
+    }
+
+    async function consultarApi(url, prefixo) {
+      if (window.location.protocol === "file:") return consultarJsonp(url, prefixo);
+      try {
+        const resposta = await fetch(url);
+        if (!resposta.ok) throw new Error("A consulta externa falhou");
+        return await resposta.json();
+      } catch (erro) { return consultarJsonp(url, prefixo); }
+    }
+
+    async function consultarWikidata(params) {
+      return consultarApi(`https://www.wikidata.org/w/api.php?${params}`, "dryFilmesWikidata");
+    }
+
+    const fotosAtorPreferidas = {
+      "Sylvester Stallone": "Sylvester Stallone.jpg",
+      "Jared Padalecki": "Jared Padalecki.jpg",
+      "Jensen Ackles": "Jensen Ackles.jpg",
+      "Misha Collins": "Misha Collins (7606263598).jpg"
+    };
+
+    async function buscarFotoCommons(nome) {
+      const params = new URLSearchParams({ action: "query", generator: "search", gsrsearch: `"${nome}"`, gsrnamespace: "6", gsrlimit: "12", prop: "imageinfo", iiprop: "url", iiurlwidth: "420", format: "json", origin: "*" });
+      const dados = await consultarApi(`https://commons.wikimedia.org/w/api.php?${params}`, "dryFilmesCommons");
+      const paginas = Object.values(dados.query?.pages || {});
+      const nomeArquivo = normalizarTexto(nome);
+      const bloqueados = /poster|logo|cosplay|fan.?art|wallpaper|screenshot|autograph|signature|group|collage/i;
+      const candidatos = paginas.filter((item) => {
+        const titulo = normalizarTexto((item.title || "").replace(/^File:/i, ""));
+        return titulo.includes(nomeArquivo) && !bloqueados.test(item.title || "") && item.imageinfo?.[0]?.thumburl;
+      });
+      candidatos.sort((a, b) => {
+        const pontos = (item) => /portrait|headshot|cropped/i.test(item.title || "") ? 2 : 0;
+        return pontos(b) - pontos(a);
+      });
+      return candidatos[0]?.imageinfo?.[0]?.thumburl || "";
+    }
+
+    async function adicionarFotosCommons(dados) {
+      await Promise.all(dados.slice(0, 16).map(async (ator) => {
+        if (ator.imagem) return;
+        if (fotosAtorPreferidas[ator.nome]) {
+          ator.fotoCommons = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(fotosAtorPreferidas[ator.nome])}?width=420`;
+          return;
+        }
+        try { ator.fotoCommons = await buscarFotoCommons(ator.nome); }
+        catch (erro) { console.warn("Foto do Commons indispon?vel para", ator.nome, erro); }
+      }));
+      return dados;
+    }
+
+    async function carregarElenco(card) {
+      const titulo = card.querySelector(".movie-title").textContent.trim();
+      const ano = card.querySelector(".movie-meta").textContent.match(/\b(?:19|20)\d{2}\b/)?.[0] || "";
+      const chave = `${normalizarTexto(titulo)}-${ano}`;
+      elencoAtores.replaceChildren();
+      const status = document.createElement("p");
+      status.className = "cast-status";
+      status.textContent = "Carregando elenco…";
+      elencoAtores.append(status);
+
+      if (cacheElenco.has(chave)) {
+        renderizarElenco(cacheElenco.get(chave), titulo);
+        return;
+      }
+
+      try {
+        const elencosConhecidos = {
+          velozesefuriosos6: [
+            ["Vin Diesel", "Dominic Toretto"], ["Paul Walker", "Brian O'Conner"], ["Dwayne Johnson", "Luke Hobbs"], ["Michelle Rodriguez", "Letty Ortiz"], ["Jordana Brewster", "Mia Toretto"], ["Tyrese Gibson", "Roman Pearce"], ["Ludacris", "Tej Parker"], ["Sung Kang", "Han Lue"], ["Gal Gadot", "Gisele Yashar"], ["Luke Evans", "Owen Shaw"]
+          ],          inatividadeparanormal: [
+            ["Marlon Wayans", "Malcolm"], ["Essence Atkins", "Kisha"], ["Cedric the Entertainer", "Padre Doug"], ["Nick Swardson", "Chip"], ["David Koechner", "Dan"]
+          ],
+          inatividadeparanormal2: [
+            ["Marlon Wayans", "Malcolm"], ["Jaime Pressly", "Megan"], ["Essence Atkins", "Kisha"], ["Gabriel Iglesias", "Miguel"], ["Missi Pyle", "Noreen"], ["Cedric the Entertainer", "Padre Doug"]
+          ],
+          todomundoempanico: [
+            ["Anna Faris", "Cindy Campbell"], ["Regina Hall", "Brenda Meeks"], ["Shawn Wayans", "Ray Wilkins"], ["Marlon Wayans", "Shorty Meeks"], ["Jon Abrahams", "Bobby Prinze"], ["Shannon Elizabeth", "Buffy Gilmore"]
+          ],
+          todomundoempanico2: [
+            ["Anna Faris", "Cindy Campbell"], ["Regina Hall", "Brenda Meeks"], ["Shawn Wayans", "Ray Wilkins"], ["Marlon Wayans", "Shorty Meeks"], ["Tim Curry", "Professor Oldman"], ["Chris Elliott", "Hanson"]
+          ],
+          todomundoempanico3: [
+            ["Anna Faris", "Cindy Campbell"], ["Regina Hall", "Brenda Meeks"], ["Simon Rex", "George Logan"], ["Anthony Anderson", "Mahalik"], ["Charlie Sheen", "Tom Logan"], ["Leslie Nielsen", "Presidente Harris"]
+          ],
+          todomundoempanico4: [
+            ["Anna Faris", "Cindy Campbell"], ["Regina Hall", "Brenda Meeks"], ["Simon Rex", "George Logan"], ["Craig Bierko", "Tom Ryan"], ["Carmen Electra", "Holly"], ["Leslie Nielsen", "Presidente Harris"]
+          ],
+          todomundoempanico5: [
+            ["Ashley Tisdale", "Jody Sanders"], ["Simon Rex", "Dan Sanders"], ["Erica Ash", "Kendra Brooks"], ["Katrina Bowden", "Natalie"], ["Terry Crews", "Martin"]
+          ],
+          todomundoempanico6: [
+            ["Anna Faris", "Cindy Campbell"], ["Regina Hall", "Brenda Meeks"], ["Shawn Wayans", "Ray Wilkins"], ["Marlon Wayans", "Shorty Meeks"]
+          ],          ramboprogramadoparamatar: [
+            ["Sylvester Stallone", "John Rambo"], ["Richard Crenna", "Coronel Sam Trautman"], ["Brian Dennehy", "Xerife Will Teasle"]
+          ],
+          ramboiiamissao: [
+            ["Sylvester Stallone", "John Rambo"], ["Richard Crenna", "Coronel Sam Trautman"], ["Charles Napier", "Murdock"], ["Julia Nickson", "Co Bao"], ["Steven Berkoff", "Podovsky"]
+          ],
+          ramboiii: [
+            ["Sylvester Stallone", "John Rambo"], ["Richard Crenna", "Coronel Sam Trautman"], ["Marc de Jonge", "Coronel Zaysen"], ["Kurtwood Smith", "Robert Griggs"], ["Sasson Gabai", "Mousa"]
+          ],
+          ramboiv: [
+            ["Sylvester Stallone", "John Rambo"], ["Julie Benz", "Sarah Miller"], ["Matthew Marsden", "Schoolboy"], ["Graham McTavish", "Lewis"], ["Reynaldo Gallegos", "Diaz"]
+          ],
+          ramboateofim: [
+            ["Sylvester Stallone", "John Rambo"], ["Paz Vega", "Carmen Delgado"], ["Sergio Peris-Mencheta", "Hugo Mart?nez"], ["Adriana Barraza", "Maria Beltran"], ["Yvette Monreal", "Gabriela Beltran"]
+          ],
+          supernaturalsobrenatural: [
+            ["Jared Padalecki", "Sam Winchester"], ["Jensen Ackles", "Dean Winchester"], ["Misha Collins", "Castiel"],
+            ["Mark Sheppard", "Crowley"], ["Jim Beaver", "Bobby Singer"], ["Alexander Calvert", "Jack Kline"],
+            ["Mark Pellegrino", "Lucifer"], ["Jeffrey Dean Morgan", "John Winchester"], ["Samantha Smith", "Mary Winchester"],
+            ["Ruth Connell", "Rowena MacLeod"], ["Rob Benedict", "Chuck Shurley"], ["Richard Speight Jr.", "Gabriel"],
+            ["Felicia Day", "Charlie Bradbury"], ["DJ Qualls", "Garth Fitzgerald IV"], ["Katie Cassidy", "Ruby"],
+            ["Lauren Cohan", "Bela Talbot"]
+          ],
+          paniconafloresta: [
+            ["Desmond Harrington", "Chris Flynn"], ["Eliza Dushku", "Jessie Burlingame"], ["Emmanuelle Chriqui", "Carly"], ["Jeremy Sisto", "Scott"], ["Kevin Zegers", "Evan"]
+          ],
+          paniconafloresta2florestadomal: [
+            ["Erica Leerhsen", "Nina Papas"], ["Henry Rollins", "Dale Murphy"], ["Texas Battle", "Jake Washington"], ["Daniella Alonso", "Amber Williams"], ["Steve Braun", "Jonesy"]
+          ],
+          paniconafloresta3: [
+            ["Janet Montgomery", "Alex"], ["Tom Frederic", "Nate"], ["Tamer Hassan", "Chavez"], ["Gil Kolirin", "Floyd"], ["Christian Contreras", "Willy"]
+          ],
+          paniconafloresta4origenssangrentas: [
+            ["Jennifer Pudavick", "Kenia Perrin"], ["Tenika Davis", "Sara Washington"], ["Kaitlyn Wong", "Bridget Manalo"], ["Terra Vnesa", "Jenna Rivers"], ["Dean Armstrong", "Daniel Mullins"]
+          ],
+          paniconafloresta5: [
+            ["Doug Bradley", "Maynard Odets"], ["Camilla Arfwedson", "Xerife Angela Carter"], ["Roxanne McKee", "Lita Marquez"], ["Simon Ginty", "Billy"], ["Paul Luebke", "Gus"]
+          ],
+          paniconafloresta6: [
+            ["Anthony Ilott", "Danny"], ["Chris Jarvis", "Jackson"], ["Aqueela Zoll", "Toni"], ["Sadie Katz", "Sally"], ["Rollo Skinner", "Vic"]
+          ],
+          paniconaflorestaafundacao2021: [
+            ["Charlotte Vega", "Jen Shaw"], ["Adain Bradley", "Darius Clemons"], ["Emma Dumont", "Milla D'Angelo"], ["Matthew Modine", "Scott Shaw"], ["Bill Sage", "Venable"]
+          ]
+        };
+        const elencoFixo = elencosConhecidos[normalizarTexto(titulo)];
+        if (elencoFixo) {
+          const dadosRambo = elencoFixo.map(([nome, personagem]) => ({ nome, personagem, imagem: "" }));
+          cacheElenco.set(chave, dadosRambo);
+          renderizarElenco(dadosRambo, titulo);
+          adicionarFotosCommons(dadosRambo).then((dadosAtualizados) => {
+            cacheElenco.set(chave, dadosAtualizados);
+            renderizarElenco(dadosAtualizados, titulo);
+          });
+          return;
+        }
+        let resultados = [];
+        for (const idioma of ["pt", "en"]) {
+          for (const termo of [`${titulo} ${ano}`, titulo]) {
+            const params = new URLSearchParams({ action: "wbsearchentities", search: termo, language: idioma, uselang: idioma, type: "item", limit: "10", format: "json", origin: "*" });
+            resultados = (await consultarWikidata(params)).search || [];
+            if (resultados.length) break;
+          }
+          if (resultados.length) break;
+        }
+        if (!resultados.length) throw new Error("T?tulo sem correspond?ncia");
+
+        const buscarEntidades = async (ids) => {
+          if (!ids.length) return {};
+          const entidades = {};
+          const idsUnicos = [...new Set(ids)];
+          for (let inicio = 0; inicio < idsUnicos.length; inicio += 40) {
+            const lote = idsUnicos.slice(inicio, inicio + 40);
+            const consulta = new URLSearchParams({ action: "wbgetentities", ids: lote.join("|"), props: "labels|descriptions|claims", languages: "pt|en", languagefallback: "1", format: "json", origin: "*" });
+            const dadosEntidades = await consultarWikidata(consulta);
+            Object.assign(entidades, dadosEntidades.entities || {});
+          }
+          return entidades;
+        };
+
+        const titulos = await buscarEntidades(resultados.map((item) => item.id));
+        const alvo = normalizarTexto(titulo);
+        const candidato = resultados.map((item) => titulos[item.id]).filter(Boolean).map((item) => {
+          const label = item.labels?.pt?.value || item.labels?.en?.value || "";
+          const elenco = item.claims?.P161 || [];
+          const data = item.claims?.P577?.[0]?.mainsnak?.datavalue?.value?.time || item.claims?.P580?.[0]?.mainsnak?.datavalue?.value?.time || "";
+          const anoItem = data.match(/[+-](\d{4})-/)?.[1] || "";
+          const normalizado = normalizarTexto(label);
+          const correspondeTitulo = normalizado === alvo || normalizado.includes(alvo) || alvo.includes(normalizado);
+          return { item, elenco, anoItem, pontos: (correspondeTitulo ? 4 : 0) + (ano && anoItem === ano ? 3 : 0) + (elenco.length ? 2 : 0) };
+        }).filter((item) => item.elenco.length).sort((a, b) => b.pontos - a.pontos)[0];
+
+        if (!candidato) throw new Error("Elenco não encontrado");
+        const creditos = candidato.elenco;
+        const atorIds = creditos.map((credito) => credito.mainsnak?.datavalue?.value?.id).filter(Boolean);
+        const papeis = creditos.map((credito) => credito.qualifiers?.P4633?.[0]?.datavalue?.value?.id).filter(Boolean);
+        const entidades = await buscarEntidades([...new Set([...atorIds, ...papeis])]);
+        const dados = creditos.map((credito) => {
+          const atorId = credito.mainsnak?.datavalue?.value?.id;
+          const ator = entidades[atorId];
+          if (!ator) return null;
+          const roleId = credito.qualifiers?.P4633?.[0]?.datavalue?.value?.id;
+          const nome = ator.labels?.pt?.value || ator.labels?.en?.value;
+          if (!nome) return null;
+          return { nome, personagem: roleId ? (entidades[roleId]?.labels?.pt?.value || entidades[roleId]?.labels?.en?.value || "") : "", imagem: ator.claims?.P18?.[0]?.mainsnak?.datavalue?.value || "" };
+        }).filter(Boolean);
+        if (!dados.length) throw new Error("Sem nomes de elenco disponíveis");
+        await adicionarFotosCommons(dados);
+        cacheElenco.set(chave, dados);
+        renderizarElenco(dados, titulo);
+      } catch (erro) {
+        console.error("Falha ao carregar elenco de", titulo, erro);
+        if (document.querySelector("#detalhesNome").textContent === titulo) {
+          const semDados = /T?tulo sem correspond?ncia|Elenco n?o encontrado|Sem nomes de elenco dispon?veis/.test(erro.message);
+          status.textContent = semDados ? "Ainda n?o h? elenco cadastrado para este t?tulo na base de dados." : "N?o foi poss?vel carregar o elenco agora. Verifique a conex?o e tente novamente.";
+          if (!semDados) {
+            const tentar = document.createElement("button");
+            tentar.type = "button";
+            tentar.className = "cast-retry";
+            tentar.textContent = "Tentar novamente";
+            tentar.addEventListener("click", () => carregarElenco(card), { once: true });
+            status.append(" ", tentar);
+          }
+        }
+      }
+    }
+
+    function renderizarElenco(dados, titulo) {
+      if (document.querySelector("#detalhesNome").textContent !== titulo) return;
+      elencoAtores.replaceChildren();
+      dados.forEach((ator) => {
+        const figura = document.createElement("figure");
+        figura.className = "cast-card";
+        if (ator.imagem || ator.fotoCommons) {
+          const foto = document.createElement("img");
+          foto.src = ator.fotoCommons || `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(ator.imagem)}?width=420`;
+          foto.alt = `Foto de ${ator.nome}`;
+          foto.loading = "lazy";
+          foto.addEventListener("error", async () => {
+            if (!ator.fotoCommons && !ator.commonsTentativa) {
+              ator.commonsTentativa = true;
+              try {
+                const alternativa = await buscarFotoCommons(ator.nome);
+                if (alternativa) { ator.fotoCommons = alternativa; foto.src = alternativa; return; }
+              } catch (erro) { console.warn("Foto alternativa indispon?vel para", ator.nome, erro); }
+            }
+            const avatar = document.createElement("div");
+            avatar.className = "cast-avatar";
+            avatar.textContent = ator.nome.split(/\s+/).map((parte) => parte[0]).slice(0, 2).join("").toUpperCase();
+            foto.replaceWith(avatar);
+          }, { once: true });
+          figura.append(foto);
+        } else {
+          const avatar = document.createElement("div");
+          avatar.className = "cast-avatar";
+          avatar.textContent = ator.nome.split(/\s+/).map((parte) => parte[0]).slice(0, 2).join("").toUpperCase();
+          figura.append(avatar);
+        }
+        const legenda = document.createElement("figcaption");
+        const nome = document.createElement("strong");
+        nome.textContent = ator.nome;
+        legenda.append(nome);
+        if (ator.personagem) {
+          const personagem = document.createElement("span");
+          personagem.textContent = ator.personagem;
+          legenda.append(personagem);
+        }
+        figura.append(legenda);
+        elencoAtores.append(figura);
+      });
+    }
+
+    let cardDetalheAtivo = null;
+
+    function mostrarPlayer(card, rolarAtePlayer = true) {
+      const previa = document.querySelector("#playerPlaceholder");
+      const imagemPlayer = document.querySelector("#imagemPlayer");
+      const cartaz = card.querySelector(".poster-image");
+      const fontePrincipal = card.dataset.backdrop || cartaz.currentSrc || cartaz.src;
+      imagemPlayer.alt = `Imagem de ${card.querySelector(".movie-title").textContent.trim()}`;
+      imagemPlayer.dataset.fallback = cartaz.currentSrc || cartaz.src;
+      imagemPlayer.onerror = () => {
+        const alternativa = imagemPlayer.dataset.fallback;
+        if (alternativa && imagemPlayer.src !== alternativa) {
+          imagemPlayer.dataset.fallback = "";
+          imagemPlayer.src = alternativa;
+        }
+      };
+      if (imagemPlayer.getAttribute("src") !== fontePrincipal) imagemPlayer.src = fontePrincipal;
+      previa.hidden = false;
+      if (rolarAtePlayer) requestAnimationFrame(() => previa.scrollIntoView({ behavior: "smooth", block: "center" }));
+    }
+    function abrirDetalhes(card) {
+      const titulo = card.querySelector(".movie-title").textContent.trim();
+      cardDetalheAtivo = card;
+      const imagem = card.querySelector(".poster-image");
+      document.querySelector("#playerPlaceholder").hidden = true;
+      document.querySelector("#imagemPlayer").removeAttribute("src");
+      document.querySelector("#imagemPlayer").dataset.fallback = "";
+      document.querySelector("#detalhesNome").textContent = titulo;
+      document.querySelector("#detalhesTipo").textContent = card.dataset.tipo === "serie" ? "S\u00e9rie" : "Filme";
+      document.querySelector("#detalhesMeta").textContent = card.querySelector(".movie-meta").textContent.trim();
+      const chave = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      document.querySelector("#detalhesSinopse").textContent = card.dataset.sinopse || sinopses[chave] || "Sinopse em breve.";
+      carregarElenco(card);
+      feedbackComentarios.textContent = "";
+      renderizarComentarios(titulo);
+      const posterDetalhe = document.querySelector("#detalhesPoster");
+      const fundoDetalhes = card.dataset.backdrop || imagem.src;
+      dialogo.querySelector(".details-layout").style.setProperty("--detalhe-background", `url("${fundoDetalhes}")`);
+      posterDetalhe.src = imagem.src;
+      posterDetalhe.alt = imagem.alt;
+      dialogo.showModal();
+      mostrarPlayer(card, false);
+      fecharDetalhes.focus({ preventScroll: true });
+      dialogo.scrollTop = 0;
+      requestAnimationFrame(() => {
+        if (dialogo.open) dialogo.scrollTop = 0;
+      });
+    }
+
+    let scrollCatalogoSalvo = window.scrollY;
+    let detalheNoHistorico = false;
+
+    function voltarDosDetalhes() {
+      if (detalheNoHistorico) history.back();
+      else if (dialogo.open) dialogo.close();
+    }
+
+    posters.forEach((poster) => {
+      const card = poster.closest(".card");
+      poster.setAttribute("role", "button");
+      poster.setAttribute("tabindex", "0");
+      poster.setAttribute("aria-label", `Ver sinopse: ${card.querySelector(".movie-title").textContent.trim()}`);
+      const abrirAbaDoTitulo = () => {
+        scrollCatalogoSalvo = window.scrollY;
+        const parametros = new URLSearchParams({
+          titulo: card.querySelector(".movie-title").textContent.trim(),
+          voltarScroll: String(Math.round(scrollCatalogoSalvo))
+        });
+        try {
+          history.pushState({ dryFilmesDetalhe: true }, "", `#${parametros.toString()}`);
+          detalheNoHistorico = true;
+        } catch (erro) {
+          detalheNoHistorico = false;
+        }
+        abrirDetalhes(card);
+      };
+      poster.addEventListener("click", abrirAbaDoTitulo);
+      poster.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          abrirAbaDoTitulo();
+        }
+      });
+    });
+
+    fecharDetalhes.addEventListener("click", voltarDosDetalhes);
+    dialogo.addEventListener("close", () => {
+      if (detalheNoHistorico) {
+        detalheNoHistorico = false;
+        history.back();
+      }
+      document.querySelector("#playerPlaceholder").hidden = true;
+      document.querySelector("#imagemPlayer").removeAttribute("src");
+      document.querySelector("#avisoReproducao").textContent = "";
+      const comportamentoAnterior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
+      window.scrollTo(0, scrollCatalogoSalvo);
+      requestAnimationFrame(() => { document.documentElement.style.scrollBehavior = comportamentoAnterior; });
+    });
+    document.querySelector("#assistirTitulo").addEventListener("click", () => {
+      if (!cardDetalheAtivo) return;
+      const previa = document.querySelector("#playerPlaceholder");
+      const imagemPlayer = document.querySelector("#imagemPlayer");
+      const cartaz = cardDetalheAtivo.querySelector(".poster-image");
+      imagemPlayer.alt = `Imagem de ${cardDetalheAtivo.querySelector(".movie-title").textContent.trim()}`;
+      imagemPlayer.dataset.fallback = cartaz.currentSrc || cartaz.src;
+      imagemPlayer.onerror = () => {
+        if (imagemPlayer.dataset.fallback && imagemPlayer.src !== imagemPlayer.dataset.fallback) {
+          const alternativa = imagemPlayer.dataset.fallback;
+          imagemPlayer.dataset.fallback = "";
+          imagemPlayer.src = alternativa;
+        }
+      };
+      imagemPlayer.src = cardDetalheAtivo.dataset.backdrop || cartaz.currentSrc || cartaz.src;
+      previa.hidden = false;
+      requestAnimationFrame(() => previa.scrollIntoView({ behavior: "smooth", block: "center" }));
+    });
+
+    document.querySelector("#voltarCatalogo").addEventListener("click", () => {
+      voltarDosDetalhes();
+    });
+
+    window.addEventListener("popstate", () => {
+      const parametros = new URLSearchParams(window.location.hash.slice(1));
+      const titulo = parametros.get("titulo");
+      if (titulo) {
+        const normalizado = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        const card = [...cards].find((item) => item.querySelector(".movie-title").textContent.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === normalizado);
+        if (card && !dialogo.open) {
+          scrollCatalogoSalvo = Number(parametros.get("voltarScroll")) || window.scrollY;
+          detalheNoHistorico = true;
+          abrirDetalhes(card);
+        }
+      } else if (dialogo.open) {
+        detalheNoHistorico = false;
+        dialogo.close();
+      } else {
+        detalheNoHistorico = false;
+      }
+    });
+
+    const parametrosDaAba = new URLSearchParams(window.location.hash.slice(1));
+    const tituloDaAba = parametrosDaAba.get("titulo");
+    const scrollDaAba = Number(parametrosDaAba.get("voltarScroll"));
+    if (Number.isFinite(scrollDaAba) && scrollDaAba >= 0) scrollCatalogoSalvo = scrollDaAba;
+    if (tituloDaAba) {
+      const tituloNormalizado = tituloDaAba.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+      const cardDaAba = [...cards].find((card) => card.querySelector(".movie-title").textContent.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase() === tituloNormalizado);
+      if (cardDaAba) abrirDetalhes(cardDaAba);
+    }
+    dialogo.addEventListener("click", (event) => {
+      if (event.target === dialogo) dialogo.close();
+    });
+
+  </script>
+</body>
+</html>
