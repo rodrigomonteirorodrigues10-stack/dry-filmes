@@ -22,11 +22,16 @@
 
     * { box-sizing: border-box; }
 
-    html { scroll-behavior: smooth; }
+    html {
+      scroll-behavior: smooth;
+      /* Keep the document canvas dark even during fast scroll repaints. */
+      background-color: var(--fundo);
+    }
 
     body {
       margin: 0;
       background: radial-gradient(ellipse at top, #21171b 0, var(--fundo) 45rem);
+      background-color: var(--fundo);
       color: var(--texto);
       font-family: "DM Sans", sans-serif;
     }
@@ -295,6 +300,21 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      /* Keep a dark poster surface visible while a lazy image is loading. */
+      background: #25212b;
+    }
+
+    .poster-fallback {
+      position: absolute;
+      z-index: 0;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: linear-gradient(145deg, #282044, #111522 72%);
+      color: #f5f3f7;
+      font: 600 1rem/1.3 "Space Grotesk", sans-serif;
+      text-align: center;
     }
 
     .poster::after {
@@ -1002,6 +1022,10 @@
       grade.append(card);
     });
     const capasAlternativas = {
+      "Homem-Aranha": "https://www.posterpalace.com/cdn/shop/products/spider-man-posterpalacecom-933595.jpg?v=1671750436",
+      "Homem-Aranha 2": "https://famousmovieposters.co.uk/cdn/shop/files/Spider_Man_2_Original_Movie_Poster-min.jpg?v=1744813322",
+      "O Espetacular Homem-Aranha": "https://media.senscritique.com/media/000006570950/source_big/The_Amazing_Spider_Man.jpg",
+      "X-Men": "https://www.impawards.com/2000/posters/xmen_ver2_xxlg.jpg",
       "Velozes e Furiosos 6": "https://image.tmdb.org/t/p/original/32pG4m4PoYRkTH4lDozvM6GlCDV.jpg",
 
       "Inatividade Paranormal": "https://images.moviebuff.com/4f1f1f95-fd6c-4245-a47b-6bfa94a7ce97?w=1000",
@@ -1013,19 +1037,45 @@
       "Todo Mundo em Pânico 5": "https://i.ebayimg.com/00/s/MTYwMFgxMDg1/z/GWwAAOSwfbFnFm89/$%5F57.JPG?set_id=880000500F",
       "Todo Mundo em Pânico 6": "https://pbs.twimg.com/media/HHkQxaqWIAIus68?format=jpg&name=large"
     };
-    grade.addEventListener("error", (evento) => {
+    document.addEventListener("error", (evento) => {
       const imagem = evento.target;
-      if (!imagem.matches(".poster-image") || imagem.dataset.tentouAlternativa === "sim") return;
-      const titulo = imagem.closest(".card")?.querySelector(".movie-title")?.textContent.trim();
-      const alternativa = capasAlternativas[titulo];
-      if (alternativa) {
-        imagem.dataset.tentouAlternativa = "sim";
+      if (!imagem.matches(".poster-image")) return;
+      const card = imagem.closest(".card");
+      const titulo = card?.querySelector(".movie-title")?.textContent.trim();
+      if (imagem.dataset.tentouAlternativa === "sim") {
+        const fallback = document.createElement("span");
+        fallback.className = "poster-fallback";
+        fallback.textContent = titulo || "Imagem indisponível";
+        imagem.hidden = true;
+        imagem.closest(".poster")?.append(fallback);
+        return;
+      }
+      const alternativa = capasAlternativas[titulo] || card?.dataset.backdrop;
+      imagem.dataset.tentouAlternativa = "sim";
+      if (alternativa && alternativa !== imagem.src) {
         imagem.src = alternativa;
+      } else {
+        imagem.dispatchEvent(new Event("error"));
       }
     }, true);    const chavesDestaque = ["scarface", "inatividadeparanormal", "velozesfuriosos", "quartetofantasticoprimeirospassos", "xmen", "homemaranha", "umespioemeio", "ramboprogramadoparamatar", "paniconafloresta4origenssangrentas", "deadpool", "thor", "panteranegra"];
     const cartoesDoCatalogo = Array.from(grade.querySelectorAll(".card"));
     const cardsDestaque = chavesDestaque.map((chave) => cartoesDoCatalogo.find((card) => normalizarTexto(card.querySelector(".movie-title").textContent) === chave)).filter(Boolean);
     gradeDestaques.append(...cardsDestaque.map((card) => card.cloneNode(true)));
+
+    const observadorDeImagens = "IntersectionObserver" in window
+      ? new IntersectionObserver((entradas, observador) => {
+          entradas.forEach((entrada) => {
+            if (!entrada.isIntersecting) return;
+            entrada.target.loading = "eager";
+            observador.unobserve(entrada.target);
+          });
+        }, { rootMargin: "2400px 0px" })
+      : null;
+    document.querySelectorAll(".poster-image[loading='lazy']").forEach((imagem) => {
+      imagem.decoding = "async";
+      if (observadorDeImagens) observadorDeImagens.observe(imagem);
+      else imagem.loading = "eager";
+    });
 
     const ordemOriginal = Array.from(grade.querySelectorAll(".card"));
     const sequencias = new Map();
@@ -1234,7 +1284,8 @@
         const combinaFiltro =
           filtroAtual === "todos" ||
           tipo === filtroAtual ||
-          generos.includes(filtroAtual);
+          generos.includes(filtroAtual) ||
+          (filtroAtual === "marvel" && generos.some((genero) => ["mcu", "spider", "xmen"].includes(genero)));
 
         const mostrar = combinaBusca && combinaFiltro;
         card.style.display = mostrar ? "" : "none";
@@ -1278,6 +1329,9 @@
       "o mentalista": "Patrick Jane, consultor do Bureau de Investigacao da California, usa sua capacidade de observar pessoas e perceber detalhes para ajudar a solucionar crimes. Ao mesmo tempo, procura o assassino de sua esposa e filha.",
       "supernatural (sobrenatural)": "Os irmaos Sam e Dean Winchester percorrem os Estados Unidos investigando fenomenos sobrenaturais. Seguindo o legado do pai, enfrentam criaturas, lendas e forcas que ameacam o mundo, enquanto lidam com os proprios lacos familiares."
     };
+    const sinopsesNormalizadas = Object.fromEntries(
+      Object.entries(sinopses).map(([titulo, texto]) => [normalizarTexto(titulo), texto])
+    );
 
     const dialogo = document.querySelector("#detalhesTitulo");
     const fecharDetalhes = dialogo.querySelector(".details-close");
@@ -1368,6 +1422,60 @@
 
       try {
         const elencosConhecidos = {
+          homemaranha: [
+            ["Tobey Maguire", "Peter Parker / Homem-Aranha"], ["Willem Dafoe", "Norman Osborn / Duende Verde"], ["Kirsten Dunst", "Mary Jane Watson"], ["James Franco", "Harry Osborn"], ["J. K. Simmons", "J. Jonah Jameson"]
+          ],
+          homemaranha2: [
+            ["Tobey Maguire", "Peter Parker / Homem-Aranha"], ["Kirsten Dunst", "Mary Jane Watson"], ["Alfred Molina", "Otto Octavius / Doutor Octopus"], ["James Franco", "Harry Osborn"], ["Rosemary Harris", "Tia May"]
+          ],
+          homemaranha3: [
+            ["Tobey Maguire", "Peter Parker / Homem-Aranha"], ["Kirsten Dunst", "Mary Jane Watson"], ["James Franco", "Harry Osborn"], ["Thomas Haden Church", "Flint Marko / Homem-Areia"], ["Topher Grace", "Eddie Brock / Venom"]
+          ],
+          oespetacularhomemaranha: [
+            ["Andrew Garfield", "Peter Parker / Homem-Aranha"], ["Emma Stone", "Gwen Stacy"], ["Rhys Ifans", "Dr. Curt Connors / Lagarto"], ["Denis Leary", "George Stacy"], ["Martin Sheen", "Tio Ben"]
+          ],
+          oespetacularhomemaranha2: [
+            ["Andrew Garfield", "Peter Parker / Homem-Aranha"], ["Emma Stone", "Gwen Stacy"], ["Jamie Foxx", "Max Dillon / Electro"], ["Dane DeHaan", "Harry Osborn"], ["Paul Giamatti", "Aleksai Sytsevich / Rino"]
+          ],
+          homemaranhadevoltaaolar: [
+            ["Tom Holland", "Peter Parker / Homem-Aranha"], ["Michael Keaton", "Adrian Toomes / Abutre"], ["Zendaya", "Michelle Jones"], ["Jacob Batalon", "Ned Leeds"], ["Marisa Tomei", "Tia May"]
+          ],
+          homemaranhalongedecasa: [
+            ["Tom Holland", "Peter Parker / Homem-Aranha"], ["Samuel L. Jackson", "Nick Fury"], ["Jake Gyllenhaal", "Quentin Beck / Mistério"], ["Zendaya", "MJ"], ["Jacob Batalon", "Ned Leeds"]
+          ],
+          homemaranhasemvoltaparacasa: [
+            ["Tom Holland", "Peter Parker / Homem-Aranha"], ["Zendaya", "MJ"], ["Benedict Cumberbatch", "Doutor Estranho"], ["Jacob Batalon", "Ned Leeds"], ["Willem Dafoe", "Norman Osborn / Duende Verde"]
+          ],
+          homemaranhanoaranhaverso: [
+            ["Shameik Moore", "Miles Morales"], ["Jake Johnson", "Peter B. Parker"], ["Hailee Steinfeld", "Gwen Stacy"], ["Mahershala Ali", "Aaron Davis"], ["Brian Tyree Henry", "Jefferson Davis"]
+          ],
+          homemaranhaatravesdoaranhaverso: [
+            ["Shameik Moore", "Miles Morales"], ["Hailee Steinfeld", "Gwen Stacy"], ["Brian Tyree Henry", "Jefferson Davis"], ["Luna Lauren Velez", "Rio Morales"], ["Oscar Isaac", "Miguel O'Hara"]
+          ],
+          xmen: [
+            ["Hugh Jackman", "Logan / Wolverine"], ["Patrick Stewart", "Professor Xavier"], ["Ian McKellen", "Magneto"], ["Famke Janssen", "Jean Grey"], ["Halle Berry", "Tempestade"]
+          ],
+          x2xmenunited: [
+            ["Hugh Jackman", "Logan / Wolverine"], ["Patrick Stewart", "Professor Xavier"], ["Ian McKellen", "Magneto"], ["Famke Janssen", "Jean Grey"], ["Brian Cox", "William Stryker"]
+          ],
+          xmenoconfrontofinal: [
+            ["Hugh Jackman", "Logan / Wolverine"], ["Halle Berry", "Tempestade"], ["Ian McKellen", "Magneto"], ["Famke Janssen", "Jean Grey / Fênix"], ["Patrick Stewart", "Professor Xavier"]
+          ],
+          xmenorigenswolverine: [
+            ["Hugh Jackman", "Logan / Wolverine"], ["Liev Schreiber", "Victor Creed / Dentes-de-Sabre"], ["Danny Huston", "William Stryker"], ["will.i.am", "John Wraith"], ["Lynn Collins", "Kayla Silverfox"]
+          ],
+          xmenprimeiraclasse: [
+            ["James McAvoy", "Charles Xavier"], ["Michael Fassbender", "Erik Lehnsherr"], ["Jennifer Lawrence", "Raven / Mística"], ["Kevin Bacon", "Sebastian Shaw"], ["Nicholas Hoult", "Hank McCoy"]
+          ],
+          xmendiasdeumfuturoesquecido: [
+            ["Hugh Jackman", "Logan / Wolverine"], ["James McAvoy", "Charles Xavier jovem"], ["Michael Fassbender", "Erik Lehnsherr jovem"], ["Jennifer Lawrence", "Raven / Mística"], ["Evan Peters", "Mercúrio"]
+          ],
+          xmenapocalipse: [
+            ["James McAvoy", "Charles Xavier"], ["Michael Fassbender", "Erik Lehnsherr / Magneto"], ["Jennifer Lawrence", "Raven / Mística"], ["Oscar Isaac", "Apocalipse"], ["Sophie Turner", "Jean Grey"]
+          ],
+          xmenfenixnegra: [
+            ["Sophie Turner", "Jean Grey / Fênix"], ["James McAvoy", "Charles Xavier"], ["Michael Fassbender", "Erik Lehnsherr / Magneto"], ["Nicholas Hoult", "Hank McCoy / Fera"], ["Jessica Chastain", "Vuk"]
+          ],
           velozesefuriosos6: [
             ["Vin Diesel", "Dominic Toretto"], ["Paul Walker", "Brian O'Conner"], ["Dwayne Johnson", "Luke Hobbs"], ["Michelle Rodriguez", "Letty Ortiz"], ["Jordana Brewster", "Mia Toretto"], ["Tyrese Gibson", "Roman Pearce"], ["Ludacris", "Tej Parker"], ["Sung Kang", "Han Lue"], ["Gal Gadot", "Gisele Yashar"], ["Luke Evans", "Owen Shaw"]
           ],          inatividadeparanormal: [
@@ -1596,7 +1704,7 @@
       document.querySelector("#detalhesTipo").textContent = card.dataset.tipo === "serie" ? "S\u00e9rie" : "Filme";
       document.querySelector("#detalhesMeta").textContent = card.querySelector(".movie-meta").textContent.trim();
       const chave = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-      document.querySelector("#detalhesSinopse").textContent = card.dataset.sinopse || sinopses[chave] || "Sinopse em breve.";
+      document.querySelector("#detalhesSinopse").textContent = card.dataset.sinopse || sinopsesNormalizadas[normalizarTexto(titulo)] || "Sinopse ainda não disponível.";
       carregarElenco(card);
       feedbackComentarios.textContent = "";
       renderizarComentarios(titulo);
