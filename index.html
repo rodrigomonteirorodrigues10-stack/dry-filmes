@@ -436,6 +436,21 @@
     .details-copy { position: relative; z-index: 2; grid-column: 2; grid-row: 1; justify-self: stretch; width: 100%; min-height: 0; margin: 0; padding: clamp(16px, 2.2vw, 28px); display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; text-align: left; color: #f5f3f7; background: rgba(10,14,27,.32); border: 1px solid rgba(255,255,255,.18); border-radius: 12px; box-shadow: 0 12px 32px rgba(10,12,20,.16); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
     .details-copy p { max-width: 920px; color: #f0f1f7; line-height: 1.65; font-size: clamp(.96rem, 1.2vw, 1.05rem); text-shadow: 0 1px 5px rgba(0,0,0,.65); }
     #detalhesMeta { margin: 0; color: #e5e8f0; font-size: .9rem; }
+    .details-series { display: grid; grid-template-columns: auto minmax(150px, 1fr); align-items: center; gap: 8px 12px; margin: 14px 0 6px; }
+    .details-series[hidden] { display: none; }
+    .details-series label { color: #e5e8f0; font-size: .9rem; font-weight: 700; }
+    .season-select { width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid rgba(255,255,255,.25); border-radius: 8px; color: #fff; background: #171a2a; font: inherit; }
+    .season-count { grid-column: 2; margin: 0; color: #c5bbff; font-size: .88rem; }
+    .episode-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 12px; width: 100%; }
+    .episode-grid[hidden] { display: none; }
+    .episode-card { display: flex; flex-direction: column; min-width: 0; aspect-ratio: 1 / 1.08; padding: 0; overflow: hidden; border: 1px solid rgba(255,255,255,.16); border-radius: 12px; color: #f5f3f7; background: rgba(9,12,24,.9); text-align: left; cursor: pointer; transition: border-color .18s, background .18s; }
+    .episode-card:hover, .episode-card[aria-pressed="true"] { border-color: #7868f6; background: rgba(120,104,246,.2); }
+    .episode-still { display: block; width: 100%; aspect-ratio: 16 / 9; flex: 0 0 auto; object-fit: cover; background: #171a2a; }
+    .episode-card-copy { display: flex; min-height: 0; flex: 1; flex-direction: column; gap: 5px; padding: 10px 12px; overflow: hidden; }
+    .episode-number { display: block; color: #c5bbff; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; }
+    .episode-title { display: -webkit-box; overflow: hidden; font-size: .92rem; font-weight: 700; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+    .episode-scene { display: -webkit-box; overflow: hidden; margin: 0; color: #d5d3df; font-size: .78rem; line-height: 1.35; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+    .episode-feedback { grid-column: 1 / -1; margin: 0; color: #e1e4ef; font-size: .85rem; }
     .details-synopsis-title { margin: 4px 0 6px; color: #fff; font-size: 1.05rem; letter-spacing: .02em; }
     .details-cast { position: relative; z-index: 2; grid-column: 1 / -1; grid-row: 2; width: 100%; margin: 0; padding: 16px 18px; text-align: left; background: rgba(10,14,27,.32); border: 1px solid rgba(255,255,255,.18); border-radius: 12px; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
     .details-cast h3 { margin: 0 0 10px; text-align: left; color: #fff; font-size: 1.05rem; letter-spacing: .02em; }
@@ -543,7 +558,7 @@
 <body>
   <header class="container">
     <a class="logo" href="#">
-      <span class="logo-icon">▶</span>
+      <span class="logo-icon">â–¶</span>
       Dry filmes
     </a>
 
@@ -792,7 +807,7 @@
           </div>
           <div class="movie-info">
             <h3 class="movie-title">Supernatural (Sobrenatural)</h3>
-            <div class="movie-meta"><span>2005 · Ação e fantasia</span></div>
+            <div class="movie-meta"><span>15 temporadas &middot; 327 epis&oacute;dios</span></div>
           </div>
         </article>
 
@@ -875,6 +890,11 @@
             <span class="details-tag" id="detalhesTipo"></span>
             <h2 id="detalhesNome"></h2>
             <p id="detalhesMeta"></p>
+            <section class="details-series" id="detalhesSerie" hidden aria-label="Temporadas e epis&oacute;dios">
+              <label for="temporadaSerie">Temporada</label>
+              <select id="temporadaSerie" class="season-select"></select>
+              <p class="season-count" id="episodiosTemporada" aria-live="polite"></p>
+            </section>
           </div>
         </div>
         <h3 class="details-synopsis-title" id="tituloSinopse">Sinopse</h3>
@@ -887,6 +907,7 @@
         <div class="cast-grid" id="elencoAtores" aria-label="Elenco. Arraste para ver mais atores." tabindex="0" aria-live="polite"></div>
       </section>
       <section class="player-placeholder" id="playerPlaceholder" hidden aria-label="Pr&eacute;via do t&iacute;tulo">
+          <div class="episode-grid" id="listaEpisodios" hidden aria-label="Epis&oacute;dios da temporada"></div>
           <div class="player-frame">
             <img id="imagemPlayer" alt="" loading="lazy">
             <div class="player-overlay" aria-hidden="true">
@@ -894,7 +915,7 @@
               <span class="player-label">V&iacute;deo ainda n&atilde;o dispon&iacute;vel</span>
             </div>
           </div>
-          <p class="player-caption">O filme ainda n&atilde;o foi adicionado para reprodu&ccedil;&atilde;o.</p>
+          <p class="player-caption" id="legendaPlayer">O v&iacute;deo ainda n&atilde;o foi adicionado para reprodu&ccedil;&atilde;o.</p>
       </section>
       <section class="details-comments" aria-label="Coment&aacute;rios do filme">
           <div class="comments-tablist" role="tablist" aria-label="Abas do detalhe">
@@ -938,7 +959,7 @@
       ["Capitao America: O Primeiro Vingador",2011,"https://m.media-amazon.com/images/M/MV5BZGM2ZTEwMzItNDBlMy00Mjk1LWFmZDItMGY0NDkzMTU2OTJhXkEyXkFqcGc%40._V1_.jpg","Determinado a servir durante a Segunda Guerra, Steve Rogers recebe um tratamento experimental que o transforma em um soldado extraordinário. Como Capitão América, ele lidera uma missão para deter Johann Schmidt e a Hydra, que planejam usar uma fonte de energia misteriosa como arma. A luta testa a coragem de Steve e o vínculo com seu melhor amigo, Bucky Barnes.","mcu","https://ilarge.lisimg.com/image/7721069/740full-captain-america%3A-the-first-avenger-screenshot.jpg"],
       ["Os Vingadores",2012,"https://www.ucicinemas.com.br/Content/Upload/Filmes/Posters/4067/filme_4067.jpg","Quando Loki chega à Terra com um exército e tenta dominar o planeta, Nick Fury reúne heróis que mal conseguem trabalhar em equipe. Homem de Ferro, Capitão América, Thor, Hulk, Viúva Negra e Gavião Arqueiro precisam superar conflitos pessoais para deter a invasão. A batalha em Nova York põe a cidade em risco e muda a forma como o mundo vê os super-heróis.","mcu","https://images.saymedia-content.com/.image/t_share/MTc0NDg2ODIwODcxNDE1MTQ0/film-review-the-avengers-2012.png"],
       ["Homem de Ferro 3",2013,"https://image.tmdb.org/t/p/original/C7MZwRTjvEy7gkWcLJeBGZFE1w.jpg","Depois da batalha de Nova York, Tony Stark sofre com ansiedade e constrói armaduras sem parar, tentando se preparar para qualquer ameaça. Atentados atribuídos ao misterioso Mandarim atingem pessoas próximas a ele e destroem sua casa. Separado de seus recursos, Tony precisa improvisar, descobrir quem está por trás dos ataques e provar que seu heroísmo não depende da armadura.","mcu","https://image.tmdb.org/t/p/w780/wPgcxHNvnEEMXx94l2911gqZ4o9.jpg"],
-      ["Thor: O Mundo Sombrio",2013,"https://m.media-amazon.com/images/M/MV5BM2E2Nzk2MzUtY2ZkMy00YTczLTgyYWItNDdmNWNkNWRmNzNhXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Uma força antiga chamada Éter desperta dentro de Jane Foster e atrai os Elfos Negros, liderados por Malekith. Para proteger os Nove Reinos, Thor retorna a Asgard e procura a ajuda de Loki, apesar da desconfiança entre os irmãos. A aliança instável leva a uma batalha que pode mergulhar o universo em escuridão.","mcu","https://www.yayworld.com/sites/default/files/post/wysiwyg-images/2018/10/24/crop/thor_the_dark_world_thor_jane_and_loki.png"],
+      ["Thor: O Mundo Sombrio",2013,"https://m.media-amazon.com/images/M/MV5BM2E2Nzk2MzUtY2ZkMy00YTczLTgyYWItNDdmNWNkNWRmNzNhXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Uma força antiga chamada Ã‰ter desperta dentro de Jane Foster e atrai os Elfos Negros, liderados por Malekith. Para proteger os Nove Reinos, Thor retorna a Asgard e procura a ajuda de Loki, apesar da desconfiança entre os irmãos. A aliança instável leva a uma batalha que pode mergulhar o universo em escuridão.","mcu","https://www.yayworld.com/sites/default/files/post/wysiwyg-images/2018/10/24/crop/thor_the_dark_world_thor_jane_and_loki.png"],
       ["Capitao America: O Soldado Invernal",2014,"https://imagens.publicocdn.com/imagens.aspx/486609?tp=KM","Vivendo em Washington após despertar no mundo moderno, Steve Rogers começa a desconfiar das missões da S.H.I.E.L.D. Quando uma conspiração interna vem à tona, ele foge ao lado de Natasha Romanoff e Sam Wilson. A investigação os coloca diante do Soldado Invernal, um adversário ligado ao passado de Steve, e ameaça a segurança do planeta.","mcu","https://media.gq.com.tw/photos/5dbce242801fc800083fcf9c/16%3A9/w_2560%2Cc_limit/2014010254744729.jpg"],
       ["Guardioes da Galaxia",2014,"https://m.media-amazon.com/images/M/MV5BOTAxMzBkYmYtM2JjZC00OTZhLThlYjItNjBmNTg1YTk4M2ZlXkEyXkFqcGc%40._V1_FMjpg_UX1000_.jpg","Peter Quill rouba uma esfera cobiçada por Ronan, um líder disposto a usá-la para destruir um planeta. A perseguição reúne Peter, Gamora, Rocket, Groot e Drax, que começam como rivais e acabam presos à mesma missão. Para sobreviver e impedir uma catástrofe, o grupo precisa confiar uns nos outros e descobrir o verdadeiro poder do artefato.","mcu","https://www.disneypixar.fr/medias/fullsize/illustration_4dcf050918ef89bcc6f75663e0078cfe_les-gardiens-de-la-galaxie-2014.jpg"],
       ["Vingadores: Era de Ultron",2015,"https://image.tmdb.org/t/p/original/4ssDuvEDkSArWEdyBl2X5EHvYKU.jpg","Tentando criar uma defesa contra novas ameaças, Tony Stark e Bruce Banner ativam uma inteligência artificial que passa a considerar a humanidade o problema. Ultron cria um plano de destruição e recruta os gêmeos Wanda e Pietro Maximoff. Os Vingadores precisam lidar com os poderes de Wanda, proteger uma nova forma de vida e impedir que uma cidade inteira seja lançada contra a Terra.","mcu","https://d1uzk9o9cg136f.cloudfront.net/f/16782943/rc/2018/04/05/23ed8831516cae7631eb914059b859ded6c37f33_xlarge.jpg"],
@@ -1005,10 +1026,10 @@
       grade.append(card);
     });
     const catalogoVelozes = [
-      ["Velozes e Furiosos",2001,"https://artofthemovies.co.uk/cdn/shop/files/the-fast-and-the-furious_37d9e7cd-187688.jpg?v=1724951363","O policial Brian O’Conner se infiltra no grupo de Dominic Toretto para investigar uma série de roubos de carros. À medida que ganha a confiança da equipe, Brian passa a questionar onde termina seu dever e começa sua lealdade.","https://artofthemovies.co.uk/cdn/shop/files/the-fast-and-the-furious_37d9e7cd-187688.jpg?v=1724951363"],
-      ["+ Velozes + Furiosos",2003,"https://movieposterhub.com/cdn/shop/files/2FAST2FURIOUS.jpg?v=1706766637&width=3287","Depois de deixar a polícia, Brian O’Conner recebe a chance de limpar seu nome participando de uma operação em Miami. Ao lado do amigo Roman Pearce, ele precisa se infiltrar na organização de um traficante e provar que ainda pode confiar em seus instintos.","https://movieposterhub.com/cdn/shop/files/2FAST2FURIOUS.jpg?v=1706766637&width=3287"],
+      ["Velozes e Furiosos",2001,"https://artofthemovies.co.uk/cdn/shop/files/the-fast-and-the-furious_37d9e7cd-187688.jpg?v=1724951363","O policial Brian Oâ€™Conner se infiltra no grupo de Dominic Toretto para investigar uma série de roubos de carros. Ã€ medida que ganha a confiança da equipe, Brian passa a questionar onde termina seu dever e começa sua lealdade.","https://artofthemovies.co.uk/cdn/shop/files/the-fast-and-the-furious_37d9e7cd-187688.jpg?v=1724951363"],
+      ["+ Velozes + Furiosos",2003,"https://movieposterhub.com/cdn/shop/files/2FAST2FURIOUS.jpg?v=1706766637&width=3287","Depois de deixar a polícia, Brian Oâ€™Conner recebe a chance de limpar seu nome participando de uma operação em Miami. Ao lado do amigo Roman Pearce, ele precisa se infiltrar na organização de um traficante e provar que ainda pode confiar em seus instintos.","https://movieposterhub.com/cdn/shop/files/2FAST2FURIOUS.jpg?v=1706766637&width=3287"],
       ["Velozes e Furiosos: Desafio em Tóquio",2006,"https://www.originalfilmart.co.uk/cdn/shop/products/Fast_and_the_Furious_Tokyo_Drift_2006_original_film_art_1600x.jpg?v=1562543128","Enviado para Tóquio para evitar a prisão, o jovem piloto Sean Boswell conhece o universo das corridas de drift. Com a ajuda de Han, ele aprende uma nova técnica e acaba desafiando o campeão local, colocando em jogo sua reputação e sua segurança.","https://www.originalfilmart.co.uk/cdn/shop/products/Fast_and_the_Furious_Tokyo_Drift_2006_original_film_art_1600x.jpg?v=1562543128"],
-      ["Velozes e Furiosos 4",2009,"https://www.movieposters.com/cdn/shop/products/1c885d1cd5de9dfcdca145414cb12f07_794611c5-9b69-4b86-a9fb-f10609307d25_1024x1024.jpg?v=1759446256","Dominic Toretto e Brian O’Conner voltam a cruzar caminhos quando uma perda pessoal e uma investigação os levam até o mesmo criminoso. Embora estejam em lados diferentes da lei, os dois precisam unir forças para enfrentar uma rede de tráfico e acertar contas com o passado.","https://www.movieposters.com/cdn/shop/products/1c885d1cd5de9dfcdca145414cb12f07_794611c5-9b69-4b86-a9fb-f10609307d25_1024x1024.jpg?v=1759446256"],
+      ["Velozes e Furiosos 4",2009,"https://www.movieposters.com/cdn/shop/products/1c885d1cd5de9dfcdca145414cb12f07_794611c5-9b69-4b86-a9fb-f10609307d25_1024x1024.jpg?v=1759446256","Dominic Toretto e Brian Oâ€™Conner voltam a cruzar caminhos quando uma perda pessoal e uma investigação os levam até o mesmo criminoso. Embora estejam em lados diferentes da lei, os dois precisam unir forças para enfrentar uma rede de tráfico e acertar contas com o passado.","https://www.movieposters.com/cdn/shop/products/1c885d1cd5de9dfcdca145414cb12f07_794611c5-9b69-4b86-a9fb-f10609307d25_1024x1024.jpg?v=1759446256"],
       ["Velozes e Furiosos 5: Operação Rio",2011,"https://image.tmdb.org/t/p/original/h7AtGhFh8YAO0xkyuG3tWaP8LKn.jpg","Em fuga no Rio de Janeiro, Dom e Brian reúnem antigos aliados para planejar um grande roubo. Perseguidos pelo agente Luke Hobbs e enfrentando um poderoso empresário local, eles apostam tudo em uma missão que pode garantir sua liberdade.","https://image.tmdb.org/t/p/original/h7AtGhFh8YAO0xkyuG3tWaP8LKn.jpg"],
       ["Velozes e Furiosos 6",2013,"https://image.tmdb.org/t/p/original/dASp9JVNV5qw14XdHbidhy99wVK.jpg","Hobbs pede ajuda a Dom e sua equipe para deter uma organização de motoristas habilidosos. A missão fica pessoal quando descobrem que Letty, dada como morta, está ligada ao grupo. Em troca de perdão, a equipe encara uma perseguição internacional e tenta trazê-la de volta.","https://image.tmdb.org/t/p/original/9iDP1hZibCX12hQgWAUhEdN4sCj.jpg"],
       ["Velozes e Furiosos 7",2015,"https://image.tmdb.org/t/p/original/nHK7bZmrTrKGOX6RgpNuxnkvClQ.jpg","A equipe tenta retomar uma vida tranquila, mas Deckard Shaw busca vingança contra eles. Quando uma missão de resgate os coloca na mira do assassino, Dom e seus amigos atravessam vários países para proteger uns aos outros e impedir uma ameaça tecnológica.","https://image.tmdb.org/t/p/original/nHK7bZmrTrKGOX6RgpNuxnkvClQ.jpg"],
@@ -1453,6 +1474,25 @@
       }
 
       try {
+        const serieComElenco = Object.values(dadosSeriesDetalhados).find((serie) => serie.chave === normalizarTexto(titulo));
+        if (serieComElenco) {
+          try {
+            const respostaElenco = await fetch(`https://api.tvmaze.com/shows/${serieComElenco.tvmazeId}/cast`);
+            if (respostaElenco.ok) {
+              const elencoApi = await respostaElenco.json();
+              const dadosElenco = elencoApi.filter((credito) => credito.person?.name).slice(0, 16).map((credito) => ({
+                nome: credito.person.name,
+                personagem: credito.character?.name || "",
+                foto: credito.person.image?.original || credito.person.image?.medium || ""
+              }));
+              if (dadosElenco.length) {
+                cacheElenco.set(chave, dadosElenco);
+                renderizarElenco(dadosElenco, titulo);
+                return;
+              }
+            }
+          } catch (erro) { console.warn("Fotos do elenco do TVmaze indispon?veis para", titulo, erro); }
+        }
         const elencosConhecidos = {
           homemaranha: [
             ["Tobey Maguire", "Peter Parker / Homem-Aranha"], ["Willem Dafoe", "Norman Osborn / Duende Verde"], ["Kirsten Dunst", "Mary Jane Watson"], ["James Franco", "Harry Osborn"], ["J. K. Simmons", "J. Jonah Jameson"]
@@ -1669,9 +1709,9 @@
       dados.forEach((ator) => {
         const figura = document.createElement("figure");
         figura.className = "cast-card";
-        if (ator.imagem || ator.fotoCommons) {
+        if (ator.foto || ator.imagem || ator.fotoCommons) {
           const foto = document.createElement("img");
-          foto.src = ator.fotoCommons || `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(ator.imagem)}?width=420`;
+          foto.src = ator.foto || ator.fotoCommons || `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(ator.imagem)}?width=420`;
           foto.alt = `Foto de ${ator.nome}`;
           foto.loading = "lazy";
           foto.addEventListener("error", async () => {
@@ -1717,10 +1757,173 @@
       });
     }
 
+    const dadosSeriesDetalhados = {
+      supernaturalsobrenatural: { chave: "supernaturalsobrenatural", tvmazeId: 19, periodo: "2005\u20132020", temporadas: [], episodiosPorTemporada: [], carregando: null },
+      omentalista: { chave: "omentalista", tvmazeId: 116, periodo: "2008\u20132015", temporadas: [], episodiosPorTemporada: [], carregando: null },
+      lucifer: { chave: "lucifer", tvmazeId: 1859, periodo: "2016\u20132021", temporadas: [], episodiosPorTemporada: [], carregando: null },
+      teenwolf: { chave: "teenwolf", tvmazeId: 176, periodo: "2011\u20132017", temporadas: [], episodiosPorTemporada: [], carregando: null }
+    };
+    const seletorTemporada = document.querySelector("#temporadaSerie");
+    const episodiosTemporada = document.querySelector("#episodiosTemporada");
+    const listaEpisodios = document.querySelector("#listaEpisodios");
+    const quadroPlayer = document.querySelector(".player-frame");
+    const legendaPlayer = document.querySelector("#legendaPlayer");
+    let temporadaSelecionada = 0;
+
+    function traduzirTexto(texto) {
+      if (!texto) return Promise.resolve("");
+      if (!cacheTraducoes.has(texto)) {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=${encodeURIComponent(texto)}`;
+        cacheTraducoes.set(texto, fetch(url).then((resposta) => resposta.ok ? resposta.json() : null)
+          .then((dados) => dados ? dados[0].map((parte) => parte[0]).join("") : texto)
+          .catch(() => texto));
+      }
+      return cacheTraducoes.get(texto);
+    }
+    const cacheTraducoes = new Map();
+
+    async function carregarEpisodiosSerie(serie) {
+      if (serie.temporadas.length) return;
+      if (serie.carregando) return serie.carregando;
+      listaEpisodios.replaceChildren();
+      const carregando = document.createElement("p");
+      carregando.className = "episode-feedback";
+      carregando.textContent = "Carregando epis\u00f3dios e cenas...";
+      listaEpisodios.append(carregando);
+      serie.carregando = (async () => {
+        try {
+          const resposta = await fetch(`https://api.tvmaze.com/shows/${serie.tvmazeId}/episodes`);
+          if (!resposta.ok) throw new Error("Consulta de epis\u00f3dios indispon\u00edvel");
+          const episodios = await resposta.json();
+          serie.temporadas = [];
+          episodios.forEach((episodio) => {
+            if (!episodio.season) return;
+            const indice = episodio.season - 1;
+            if (!serie.temporadas[indice]) serie.temporadas[indice] = [];
+            const cena = document.createElement("div");
+            cena.innerHTML = episodio.summary || "";
+            serie.temporadas[indice].push({ nome: episodio.name, cena: cena.textContent.trim(), imagem: episodio.image?.original || episodio.image?.medium || "" });
+          });
+          serie.temporadas = serie.temporadas.filter(Boolean);
+          serie.episodiosPorTemporada = serie.temporadas.map((temporada) => temporada.length);
+          if (cardDetalheAtivo && normalizarTexto(cardDetalheAtivo.querySelector(".movie-title").textContent.trim()) === serie.chave) {
+            atualizarDetalhesSerie(cardDetalheAtivo.querySelector(".movie-title").textContent.trim());
+            renderizarEpisodios(serie);
+          }
+        } catch (erro) {
+          listaEpisodios.replaceChildren();
+          const aviso = document.createElement("p");
+          aviso.className = "episode-feedback";
+          aviso.textContent = "N\u00e3o foi poss\u00edvel carregar os epis\u00f3dios. Verifique a conex\u00e3o.";
+          const tentar = document.createElement("button");
+          tentar.type = "button";
+          tentar.className = "cast-retry";
+          tentar.textContent = "Tentar novamente";
+          tentar.addEventListener("click", () => { serie.carregando = null; carregarEpisodiosSerie(serie); }, { once: true });
+          aviso.append(" ", tentar);
+          listaEpisodios.append(aviso);
+        } finally { serie.carregando = null; }
+      })();
+      return serie.carregando;
+    }
+
+    function renderizarEpisodios(serie) {
+      if (!serie || !serie.temporadas.length) return;
+      listaEpisodios.replaceChildren();
+      const episodios = serie.temporadas[temporadaSelecionada] || [];
+      episodios.forEach((episodio, indice) => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "episode-card";
+        botao.setAttribute("aria-pressed", "false");
+        if (episodio.imagem) {
+          const imagem = document.createElement("img");
+          imagem.className = "episode-still";
+          imagem.src = episodio.imagem;
+          imagem.alt = `Cena do epis\u00f3dio ${indice + 1}`;
+          imagem.loading = "lazy";
+          botao.append(imagem);
+        }
+        const conteudo = document.createElement("span");
+        conteudo.className = "episode-card-copy";
+        const numero = document.createElement("span");
+        numero.className = "episode-number";
+        numero.textContent = `Epis\u00f3dio ${indice + 1}`;
+        const titulo = document.createElement("span");
+        titulo.className = "episode-title";
+        titulo.textContent = episodio.nome;
+        const cena = document.createElement("span");
+        cena.className = "episode-scene";
+        cena.textContent = episodio.cena || "Uma cena marcante deste epis\u00f3dio.";
+        conteudo.append(numero, titulo, cena);
+        botao.append(conteudo);
+        const textoCombinado = episodio.cena ? `${episodio.nome}\n|||\n${episodio.cena}` : episodio.nome;
+        traduzirTexto(textoCombinado).then((traduzido) => {
+          const partes = traduzido.split("|||").map((parte) => parte.trim());
+          if (titulo.isConnected) titulo.textContent = partes[0] || episodio.nome;
+          if (cena.isConnected && partes[1]) cena.textContent = partes[1];
+        });
+        botao.addEventListener("click", () => {
+          listaEpisodios.querySelectorAll(".episode-card").forEach((item) => item.setAttribute("aria-pressed", "false"));
+          botao.setAttribute("aria-pressed", "true");
+          const feedback = listaEpisodios.querySelector(".episode-feedback") || document.createElement("p");
+          feedback.className = "episode-feedback";
+          feedback.textContent = `Selecionado: Temporada ${temporadaSelecionada + 1}, Epis\u00f3dio ${indice + 1} - ${titulo.textContent}. A reprodu\u00e7\u00e3o ainda n\u00e3o est\u00e1 dispon\u00edvel.`;
+          listaEpisodios.append(feedback);
+        });
+        listaEpisodios.append(botao);
+      });
+    }
+
+    function atualizarDetalhesSerie(titulo) {
+      const serie = dadosSeriesDetalhados[normalizarTexto(titulo)];
+      const painel = document.querySelector("#detalhesSerie");
+      painel.hidden = !serie;
+      if (!serie) return;
+      const totalEpisodios = serie.episodiosPorTemporada.reduce((soma, quantidade) => soma + quantidade, 0);
+      document.querySelector("#detalhesMeta").textContent = `${serie.periodo} \u00b7 ${serie.temporadas.length || "..."} temporadas \u00b7 ${totalEpisodios || "..."} epis\u00f3dios`;
+      temporadaSelecionada = 0;
+      seletorTemporada.replaceChildren();
+      seletorTemporada.disabled = !serie.temporadas.length;
+      serie.temporadas.forEach((episodios, indice) => {
+        const opcao = document.createElement("option");
+        opcao.value = String(indice);
+        opcao.textContent = `Temporada ${indice + 1}`;
+        seletorTemporada.append(opcao);
+      });
+      episodiosTemporada.textContent = serie.temporadas.length ? `${serie.episodiosPorTemporada[0]} epis\u00f3dios` : "Carregando epis\u00f3dios...";
+      seletorTemporada.onchange = () => {
+        temporadaSelecionada = Number(seletorTemporada.value);
+        episodiosTemporada.textContent = `${serie.episodiosPorTemporada[temporadaSelecionada]} epis\u00f3dios`;
+        renderizarEpisodios(serie);
+      };
+      if (serie.temporadas.length) renderizarEpisodios(serie);
+      else carregarEpisodiosSerie(serie);
+    }
+
     let cardDetalheAtivo = null;
 
+    function atualizarLegendaPlayer(card) {
+      document.querySelector("#legendaPlayer").textContent = card.dataset.tipo === "serie"
+        ? "A s\u00e9rie ainda n\u00e3o foi adicionada para reprodu\u00e7\u00e3o."
+        : "O filme ainda n\u00e3o foi adicionado para reprodu\u00e7\u00e3o.";
+    }
+
     function mostrarPlayer(card, rolarAtePlayer = true) {
+      atualizarLegendaPlayer(card);
       const previa = document.querySelector("#playerPlaceholder");
+      const temEpisodios = Boolean(dadosSeriesDetalhados[normalizarTexto(card.querySelector(".movie-title").textContent.trim())]);
+      listaEpisodios.hidden = !temEpisodios;
+      quadroPlayer.hidden = temEpisodios;
+      legendaPlayer.hidden = temEpisodios;
+      if (temEpisodios) {
+        previa.hidden = false;
+        const serie = dadosSeriesDetalhados[normalizarTexto(card.querySelector(".movie-title").textContent.trim())];
+        if (!serie.temporadas.length) carregarEpisodiosSerie(serie);
+        else renderizarEpisodios(serie);
+        if (rolarAtePlayer) requestAnimationFrame(() => previa.scrollIntoView({ behavior: "smooth", block: "center" }));
+        return;
+      }
       const imagemPlayer = document.querySelector("#imagemPlayer");
       const cartaz = card.querySelector(".poster-image");
       const fontePrincipal = card.dataset.backdrop || cartaz.currentSrc || cartaz.src;
@@ -1746,7 +1949,15 @@
       document.querySelector("#imagemPlayer").dataset.fallback = "";
       document.querySelector("#detalhesNome").textContent = titulo;
       document.querySelector("#detalhesTipo").textContent = card.dataset.tipo === "serie" ? "S\u00e9rie" : "Filme";
-      document.querySelector("#detalhesMeta").textContent = card.querySelector(".movie-meta").textContent.trim();
+      const metadados = card.querySelector(".movie-meta").textContent.trim();
+      const detalhesSerie = dadosSeriesDetalhados[normalizarTexto(titulo)];
+      document.querySelector("#detalhesMeta").textContent = detalhesSerie
+        ? `${detalhesSerie.periodo} \u00b7 ${detalhesSerie.temporadas.length || "..."} temporadas \u00b7 ${detalhesSerie.episodiosPorTemporada.reduce((soma, quantidade) => soma + quantidade, 0) || "..."} epis\u00f3dios`
+        : metadados;
+      atualizarDetalhesSerie(titulo);
+      document.querySelector("#assistirTitulo").innerHTML = detalhesSerie
+        ? '<span class="details-watch-icon" aria-hidden="true">&#9654;</span> VER EPIS&Oacute;DIOS'
+        : '<span class="details-watch-icon" aria-hidden="true">&#9654;</span> ASSISTIR';
       const chave = titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
       document.querySelector("#detalhesSinopse").textContent = card.dataset.sinopse || sinopsesNormalizadas[normalizarTexto(titulo)] || "Sinopse ainda não disponível.";
       carregarElenco(card);
@@ -1818,9 +2029,14 @@
     });
     document.querySelector("#assistirTitulo").addEventListener("click", () => {
       if (!cardDetalheAtivo) return;
+      if (dadosSeriesDetalhados[normalizarTexto(cardDetalheAtivo.querySelector(".movie-title").textContent.trim())]) {
+        mostrarPlayer(cardDetalheAtivo, true);
+        return;
+      }
       const previa = document.querySelector("#playerPlaceholder");
       const imagemPlayer = document.querySelector("#imagemPlayer");
       const cartaz = cardDetalheAtivo.querySelector(".poster-image");
+      atualizarLegendaPlayer(cardDetalheAtivo);
       imagemPlayer.alt = `Imagem de ${cardDetalheAtivo.querySelector(".movie-title").textContent.trim()}`;
       imagemPlayer.dataset.fallback = cartaz.currentSrc || cartaz.src;
       imagemPlayer.onerror = () => {
